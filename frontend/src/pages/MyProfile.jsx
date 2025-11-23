@@ -1,27 +1,62 @@
-import profileLogo from "../assets/profileLogo.png";
+// import profileLogo from "../assets/profileLogo.png";
 import { useState } from "react";
-
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
+import { assets } from "../assets/assets_frontend/assets";
+import axios from 'axios'
+import { toast } from "react-toastify";
 export default function MyProfile() {
-  const [userData, setUserData] = useState({
-    name: "Eymen Bacar",
-    image: profileLogo,
-    email: "ayman@gmail.com",
-    phone: "+123456789",
-    address: "Gümüştekin Mah. Adsız Şehitler Cd. Şahinbey/Gaziantep",
-    gender: "Erkek",
-    dob: "2004-01-03",
-  });
+  const{ userData, setUserData,token,backendUrl, loadUserProfileData } = useContext(AppContext);
   const [isEdit, setIsEdit] = useState(false);
+  const[image,setImage] = useState(false);
+  const updateUserProfileData = async() => {
+    try{
+      const formData = new FormData();
+      formData.append('name', userData.name);
+      formData.append('phone', userData.phone);
+      formData.append('address', JSON.stringify(userData.address));
+      formData.append('dob', userData.dob);
+      formData.append('gender', userData.gender);
+      image && formData.append('image', image);
+      const {data} =  await axios.post(`${backendUrl}/api/user/update-profile`, formData,{
+        headers:{
+          Authorization: `Bearer ${token}`
+        }
+      })
+      if(data.success){
+        toast.success('Profil başarıyla güncellendi');
+        await loadUserProfileData();
+        setIsEdit(false);
+        setImage(false)
+      }else{
+        toast.error('Profil güncellenemedi');
+      }
+        
+    }catch(error){
+      console.log(error);
+      toast.error('Bir hata oluştu');
+    }
+  } 
 
-  return (
+  return userData && (
     <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-xl shadow-lg mt-8">
-      {/* Profile Header */}
-      <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
-        <img
+      {
+        isEdit ? <label htmlFor="image">
+          <div className = 'inline-block reative cursor-pointer'>
+            <img className='w-36 rounded opacity-75' src={image ? URL.createObjectURL(image) : userData.image} alt="" />
+            <img className="w-10 absolute bottom-12 right-12" src={image ?'' :assets.upload_icon} alt="" />
+          </div>
+          <input onChange={(e) => setImage(e.target.files[0])} type="file"  id='image' hidden />
+          
+        </label>:    <img
           src={userData.image}
           alt="User"
           className="w-32 h-32 rounded-full border-4 border-blue-400 shadow-md"
         />
+      }
+      {/* Profile Header */}
+      <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
+      
         <div className="flex-1">
           {isEdit ? (
             <input
@@ -127,7 +162,7 @@ export default function MyProfile() {
       <div className="flex justify-end">
         {isEdit ? (
           <button
-            onClick={() => setIsEdit(false)}
+            onClick={updateUserProfileData}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
           >
             Bilgileri Kaydet
@@ -142,5 +177,5 @@ export default function MyProfile() {
         )}
       </div>
     </div>
-  );
+  )
 }

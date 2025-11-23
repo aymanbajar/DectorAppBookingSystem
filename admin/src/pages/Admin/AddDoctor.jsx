@@ -16,10 +16,10 @@ export default function AddDoctor() {
     const[address1,setAddress1]=useState("");
     const[address2,setAddress2]=useState("");
     const[about,setAbout]=useState("");
-    const{backendUrl,aToken} = useContext(AdminContext);
+    const{backendURL,aToken} = useContext(AdminContext);
     const onSubmitHandler = async (e) => {
         e.preventDefault();
-        try{{}
+        try{
             if(!docImg){
                 return toast.error('resim seçilmedi');
 
@@ -39,19 +39,31 @@ export default function AddDoctor() {
             formData.forEach((value,key) => {  
                 console.log(key,value);
             });
-            const{data} = await axios.post(`${backendUrl}/api/admin/add-doctor`,formData,{
+            const{data} = await axios.post(`${backendURL}/api/admin/add-doctor`,formData,{
                 headers:{
-                    aToken
+                    Authorization: `Bearer ${aToken}`
                 }
             });
             if(data.success){
                 toast.success('doktor başarıyla eklendi');
+                setName('');
+                setEmail('')
+                setFees('');
+                setPassword('');
+                setSpeciality('');
+                setDegree('');
+                setDocImg(false);
+                setAbout('');
+                setAddress1('');
+                setAddress2('');
+                
             }else{
                 toast.error('doktor eklenmedi')
             }
 
         }catch(error){
-
+            toast.error('hata oluştu, doktor eklenmedi')
+            console.log(error)
         }
     }
   return (
@@ -105,7 +117,7 @@ export default function AddDoctor() {
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
                 className="border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200"
-                type="text"
+                type="password"
                 placeholder="Doktorun şifresini girin"
                 required
               />

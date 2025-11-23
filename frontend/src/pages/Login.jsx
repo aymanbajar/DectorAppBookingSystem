@@ -1,15 +1,55 @@
+import { useContext } from "react";
 import { useState } from "react";
+import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 export default function Login() {
+  const { backendUrl, token, setToken } = useContext(AppContext);
   const [state, setState] = useState("Kayıt ol");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-
+  const navigate = useNavigate();
   const onSubmitHeader = async (event) => {
     event.preventDefault();
+    try {
+      if (state === "Kayıt ol") {
+        const { data } = await axios.post(`${backendUrl}/api/user/register`, {
+          name,
+          email,
+          password,
+        });
+        if (data.success) {
+          localStorage.setItem("token", data.token);
+          setToken(data.token);
+        } else {
+          toast.error(data.message);
+        }
+      }else{
+        const { data } = await axios.post(`${backendUrl}/api/user/login`, {
+          email,
+          password,
+        });
+        if (data.success) {
+          localStorage.setItem("token", data.token);
+          setToken(data.token);
+        } else {
+          toast.error(data.message);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Bir hata oluştu, lütfen tekrar deneyin.");
+    }
   };
-
+useEffect(() => {
+  if(token){
+    navigate('/');
+  }
+}, [token]);
   return (
     <div className="flex justify-center items-center min-h-screen font-serif ">
       <form
@@ -21,7 +61,7 @@ export default function Login() {
         </h2>
         <p className="text-gray-500 mb-6">
           Lütfen {state === "Kayıt ol" ? "hesap oluşturun" : "giriş yapın "}
-           randevu almak için.
+          randevu almak için.
         </p>
 
         {state === "Kayıt ol" && (
