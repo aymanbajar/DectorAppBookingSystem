@@ -3,10 +3,15 @@ import { useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets_frontend/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios'
 
 export default function Appointments() {
+  const navigate = useNavigate();
   const { docId } = useParams();
-  const { doctors, currencySymbol } = useContext(AppContext);
+  const { doctors, currencySymbol, backendUrl, token, getDoctorsData } =
+    useContext(AppContext);
   const daysOfWeek = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Pzr"];
   const [docInfo, setDocInfo] = useState(null);
   const [docSlots, setDocSlots] = useState([]);
@@ -40,10 +45,18 @@ export default function Appointments() {
           hour: "2-digit",
           minute: "2-digit",
         });
+        let day = currentDate.getDate();
+        let month = currentDate.getMonth() + 1;
+        let year = currentDate.getFullYear();
+        const slotDate =day +"-" + month+ "-" +year
+        const slotTime = formattedTime;
+        const isSlotAvailable = docInfo.slot_booked[slotDate] && docInfo.slot_booked[slotDate].includes(slotTime) ? false:true;
+        if(isSlotAvailable){
         timeSlots.push({
           datetime: new Date(currentDate),
           time: formattedTime,
         });
+        }
         currentDate.setMinutes(currentDate.getMinutes() + 30);
       }
 
@@ -51,6 +64,37 @@ export default function Appointments() {
     }
 
     setDocSlots(allSlots); // ✅ تحديث مرة وحدة فقط
+  };
+  const bookAppointment = async () => {
+    if (!token) {
+      toast.warning("Lütfen randevu almak için giriş yapın");
+      return navigate("/login");
+    }
+    try {
+      const date = docSlots[slotIndex][0].datetime;
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      const slotDate = day + "-" + month + "-" + year;
+      const {data} = await axios.post(`${backendUrl}/api/user/book-appointment`,{
+        docId,
+        slotDate,
+        slotTime},{
+        headers:{
+          Authorization:`Bearer ${token}`
+      }}
+      )
+      if(data.success){
+        toast.success("Randevu başarıyla alındı");
+        getDoctorsData();
+        navigate('/my-appointments');
+      }else{
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Randevu alınamadı");
+    }
   };
 
   useEffect(() => {
@@ -157,11 +201,10 @@ export default function Appointments() {
                 >
                   <p className="font-medium text-block">
                     {item[0] && daysOfWeek[item[0].datetime.getDay()]}{" "}
-                    {/* ✅ صح */}
                   </p>
                   <p className="text-sm">
                     {item[0] && item[0].datetime.getDate()}/
-                    {item[0].datetime.getMonth() + 1}
+                    {item[0] && item[0].datetime.getMonth() + 1}
                   </p>
                 </div>
               ))}
@@ -183,12 +226,15 @@ export default function Appointments() {
               ))}
           </div>
 
-          <button className="bg-blue-800 text-white text-xl font-light px-14 py-3 rounded-full  my-6 ">
+          <button
+            onClick={bookAppointment}
+            className="bg-blue-800 text-white text-xl font-light px-14 py-3 rounded-full  my-6 "
+          >
             Randevu al
           </button>
         </div>
         {/* listing related Doctors */}
-        <RelatedDoctors docId={docId} speciality ={docInfo.speciality}/>
+        <RelatedDoctors docId={docId} speciality={docInfo.speciality} />
       </div>
     )
   );

@@ -73,7 +73,7 @@ export default function Navbar() {
         </NavLink>
       </ul>
       <div className="flex items-center gap-3">
-        {token ? userData (
+        {token && userData ? (
           <div className=" flex items-center gap-2 cursor-pointer group  relative">
             <img
               className="w-8 rounded-full"

@@ -1,6 +1,8 @@
 import validator from 'validator';
 import bcrypt from 'bcrypt';
 import userModel from '../models/userModel.js';
+import doctorModel from '../models/doctorModel.js';
+import appointmentModel from '../models/appointmentModel.js';
 import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 // api to  register user
@@ -156,9 +158,11 @@ export const updateProfile = async (req,res) => {
 }
 
 //api to book appointment
-const bookAppointment  =async(req,res) => {
+export const bookAppointment  =async(req,res) => {
     try{
-        const{userId,docId,slotDate,slotTime} = req.body;
+        const {docId, slotDate, slotTime} = req.body;
+        const userId = req.userId;
+        
         const docData = await doctorModel.findById(docId).select('-password')
         if(!docData.available){
             return res.json({
@@ -188,8 +192,8 @@ const bookAppointment  =async(req,res) => {
             userData,
             docData,
             amount:docData.fees,
-            slotDate,
-            slotTime,
+            sloteDate: slotDate,
+            sloteTime: slotTime,
             date:Date.now(),
         }
         const newAppointment = new appointmentModel(appointmentData);
@@ -207,4 +211,25 @@ const bookAppointment  =async(req,res) => {
             message:error.message
         })
     }
+}
+// api  to get  user appointements for frontend my-appointments page
+
+export const  listAppointment = async(req,res) => {
+    try{
+        const {userId} = req.body;
+        const appointments = await appointmentModel.find({userId});
+        res.json({
+            success:true,
+            appointments
+        })
+
+    }catch(error){
+
+        console.log(error);
+        res.json({
+            success:false,
+            message:error.message
+        })
+    }
+
 }

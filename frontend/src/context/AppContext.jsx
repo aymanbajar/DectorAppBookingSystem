@@ -50,6 +50,7 @@ const [userData,setUserData] = useState(false);
   
   const value = {
     doctors,
+    getDoctorsData,
     currencySymbol,
     token,
     setToken,
