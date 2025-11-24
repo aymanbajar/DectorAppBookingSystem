@@ -48,10 +48,13 @@ export default function Appointments() {
         let day = currentDate.getDate();
         let month = currentDate.getMonth() + 1;
         let year = currentDate.getFullYear();
-        const slotDate =day +"-" + month+ "-" +year
+        const slotDate = day + "-" + month + "-" + year;
         const slotTime = formattedTime;
-        const isSlotAvailable = docInfo.slot_booked[slotDate] && docInfo.slot_booked[slotDate].includes(slotTime) ? false:true;
-        if(isSlotAvailable){
+        
+        // Check if slot is already booked
+        const isSlotBooked = docInfo.slots_booked?.[slotDate]?.includes(slotTime);
+        
+        if(!isSlotBooked){
         timeSlots.push({
           datetime: new Date(currentDate),
           time: formattedTime,

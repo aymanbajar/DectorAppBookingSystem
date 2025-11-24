@@ -1,7 +1,7 @@
-import {assets} from '../assets/assets';
 import { useState } from 'react';
 import { AdminContext } from '../context/AdminContext';
 import { useContext } from 'react';
+import { DoctorContext } from '../context/DoctorContext';
 import axios from 'axios'
 import { toast } from 'react-toastify';
 export default function Login() {
@@ -9,6 +9,7 @@ export default function Login() {
     const[email,setEmail] = useState('');
     const[password,setPassword] = useState('');
     const {setAtoken,backendURL} = useContext(AdminContext);
+    const{dToken,backendUrl,setDToken} = useContext(DoctorContext);
     const onSubmitHandler = async (e) => {
         e.preventDefault();
         try{
@@ -22,10 +23,18 @@ export default function Login() {
                 }
             }
             else{
-
+                const {data} = await axios.post(`${backendUrl}/api/doctor/login`,{email,password});
+                if(data.success){
+                    localStorage.setItem('dToken',data.token);
+                    setDToken(data.token);
+                    console.log(dToken)
+                }else{
+                    toast.error('hata tanımlanmadı');
+                }
             }
 
         }catch(error){
+            console.log(error);
 
         }
     }

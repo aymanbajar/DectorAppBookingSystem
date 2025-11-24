@@ -5,6 +5,7 @@ import doctorModel from '../models/doctorModel.js';
 import appointmentModel from '../models/appointmentModel.js';
 import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
+import razorpay from 'razorpay';
 // api to  register user
 export const registerUser = async (req, res) => {
     try{
@@ -216,7 +217,7 @@ export const bookAppointment  =async(req,res) => {
 
 export const  listAppointment = async(req,res) => {
     try{
-        const {userId} = req.body;
+        const userId = req.userId;
         const appointments = await appointmentModel.find({userId});
         res.json({
             success:true,
@@ -232,4 +233,111 @@ export const  listAppointment = async(req,res) => {
         })
     }
 
+}
+
+// api  to  cancel  appointment
+export const cancelAppointment = async(req,res) => {
+    try{
+        const {appointmentId} = req.body;
+        const userId = req.userId;
+        
+        const appointmentData = await appointmentModel.findById(appointmentId);
+        
+        if(!appointmentData){
+            return res.json({   
+                success:false,
+                message:"Randevu bulunamadı"
+            })
+        }
+        
+        if(appointmentData.userId !== userId){
+            return res.json({   
+                success:false,
+                message:"Randevu bulunamadı"
+            })
+        }
+
+        await appointmentModel.findByIdAndUpdate(appointmentId,{cancelled:true});
+        const {docId, sloteDate, sloteTime} = appointmentData;
+        const docData = await doctorModel.findById(docId);
+        let slots_booked = docData.slots_booked;
+        slots_booked[sloteDate] = slots_booked[sloteDate].filter(slot => slot !== sloteTime);
+        await doctorModel.findByIdAndUpdate(docId,{slots_booked});
+        res.json({
+            success:true,
+            message:"Randevu iptal edildi"
+        })
+
+    }catch(error){
+        console.log(error);
+        res.json({
+            success:false,
+            message:error.message
+        })
+    }
+}   
+
+const razorpayInstance = new razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+// api to create razorpay 
+export const paymentRazorpay = async (req, res) => {
+try{
+        const{appointmentId} = req.body;
+    const appointmentData = await appointmentModel.findById(appointmentId);
+    if(!appointmentData || appointmentData.cancelled){
+        return res.json({
+            success:false,
+            message:"Randevu bulunamadı"
+        })
+    }
+
+    const options = {
+        amount : appointmentData.amount * 100,
+        currency : process.env.CURRENCY,
+        receipt : `receipt_order_${appointmentId}`
+    }
+
+    const order = await razorpayInstance.orders.create(options);
+    res.json({
+        success:true,
+        order
+    })
+
+}catch(error){
+    console.log(error);
+    res.json({
+        success:false,
+        message:error.message
+    })  
+}
+
+};
+
+//api  to verify payment of razorpay
+export const verifyRazorpay = async(req,res) => {
+    try{
+        const {razorpay_order_id} = req.body;
+        const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
+        if(orderInfo.status === 'paid'){
+            await appointmentModel.findByIdAndUpdate(orderInfo.receipt,{paid:true});
+             res.json({
+                success:true,
+                message:"Ödeme başarılı"
+            })
+        }else{
+            res.json({
+                success:false,
+                message:"Ödeme başarısız"
+            })  
+        }
+
+    }catch(error){
+        console.log(error);
+        res.json({
+            success:false,
+            message:error.message
+        })  
+    }
 }
