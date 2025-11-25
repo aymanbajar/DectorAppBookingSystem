@@ -2,11 +2,11 @@ import { assets } from "../assets/assets_frontend/assets.js";
 
 export default function Contact() {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 font-sans">
+    <div className="max-w-7xl mx-auto px-6 py-12 font-sans  font-serif">
       {/* Title */}
       <div className="text-center mb-10">
         <p className="text-3xl font-bold text-gray-900">Bize Ulaşın</p>
-        <p className="text-gray-600 mt-2">
+        <p className="text-gray-600 mt-2 text-2xl">
           Sorularınız veya talepleriniz için bizimle iletişime geçin
         </p>
       </div>
@@ -27,7 +27,7 @@ export default function Contact() {
           <div>
             <p className="text-2xl font-semibold text-gray-800">Ofisimiz</p>
             <p className="text-gray-600 mt-1">
-              54709 Atatürk Caddesi Süit 350, İstanbul, Türkiye
+              Yıldız Caddesi No:5, Ofis 14, Sarıyer/İstanbul
             </p>
           </div>
 
@@ -38,7 +38,7 @@ export default function Contact() {
 
           <div>
             <p className="text-gray-800 font-medium">E-posta:</p>
-            <p className="text-gray-600">info@ornekfirma.com</p>
+            <p className="text-gray-600">info@dectorapp.com</p>
           </div>
 
           <div>

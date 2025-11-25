@@ -54,14 +54,14 @@ useEffect(() => {
     <div className="flex justify-center items-center min-h-screen font-serif ">
       <form
         onSubmit={onSubmitHeader}
-        className="bg-white shadow-xl rounded-xl p-10 w-full max-w-md"
+        className="bg-white shadow-2xl rounded-xl p-10 w-full max-w-md"
       >
         <h2 className="text-2xl font-bold text-gray-800 mb-2">
           {state === "Kayıt ol" ? "Hesap Oluştur" : "Giriş Yap"}
         </h2>
-        <p className="text-gray-500 mb-6">
-          Lütfen {state === "Kayıt ol" ? "hesap oluşturun" : "giriş yapın "}
-          randevu almak için.
+        <p className="text-gray-500 mb-6 text-[19px]">
+          Lütfen {state === "Kayıt ol" ? "hesap oluşturun " : "giriş yapın "}
+           randevu almak için.
         </p>
 
         {state === "Kayıt ol" && (

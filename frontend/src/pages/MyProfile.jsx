@@ -39,8 +39,11 @@ export default function MyProfile() {
   } 
 
   return userData && (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-xl shadow-lg mt-8">
-      {
+    <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-xl shadow-lg mt-8 font-serif">
+     
+      {/* Profile Header */}
+      <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
+       {
         isEdit ? <label htmlFor="image">
           <div className = 'inline-block reative cursor-pointer'>
             <img className='w-36 rounded opacity-75' src={image ? URL.createObjectURL(image) : userData.image} alt="" />
@@ -54,9 +57,6 @@ export default function MyProfile() {
           className="w-32 h-32 rounded-full border-4 border-blue-400 shadow-md"
         />
       }
-      {/* Profile Header */}
-      <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-10">
-      
         <div className="flex-1">
           {isEdit ? (
             <input

@@ -9,8 +9,8 @@ export default function DoctorList(){
         }
     }, [aToken]);
     return(
-        <div className= "m-5 max-h-[90vh] overflow-y-scroll ">
-            <h1 className="text-lg font-medium">Doktorlar listesi</h1>
+        <div className= "m-5 max-h-[90vh] overflow-y-scroll font-serif text-2xl ">
+            <h1 className="text-2xl font-medium">Doktorlar listesi</h1>
             <div className="w-full flex flex-wrap gap-4 pt-5 gap-y-6">
                 {
                      doctors.map((item,index) => (

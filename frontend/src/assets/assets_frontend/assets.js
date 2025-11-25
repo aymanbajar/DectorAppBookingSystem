@@ -62,12 +62,12 @@ export const doctors = [
     _id: "doc1",
     name: "Dr. Ahmet Yılmaz",
     image: doc1,
-    speciality: "PratisyenHekim", // General physician
-    degree: "MBBS",
+    speciality: "Pratisyen Hekim", // General physician
+    degree: "Tıp Doktoru",
     experience: "4 Yıl", // Years → Yıl
     about:
       "Dr. Ahmet Yılmaz, kapsamlı tıbbi bakım sunmaya güçlü bir bağlılığa sahiptir; önleyici tıp, erken teşhis ve etkili tedavi stratejilerine odaklanır.",
-    fees: 50,
+    fees: 500,
     address: {
       line1: "Atatürk Caddesi, No: 25, Kat: 3, Daire:",
       line2: "7, Kadıköy, İstanbul",
@@ -77,14 +77,13 @@ export const doctors = [
     _id: "doc2",
     name: "Dr. Elif Kaya",
     image: doc2,
-    speciality: "KadınDoğumUzmanı", // Gynecologist
+    speciality: "Kadın Doğum Uzmanı", // Gynecologist
     degree: "MBBS",
     experience: "3 Yıl",
     about:
-      "Dr. Elif Kaya, kapsamlı tıbbi bakım sunmaya güçlü bir bağlılığa sahiptir; önleyici tıp, erken teşhis ve etkili tedavi stratejilerine odaklanır.",
-    fees: 60,
+  "Dr. Elif Kaya, kadın hastalıkları ve doğum alanında modern tanı ve tedavi yöntemleriyle hizmet vermektedir. Gebelik takibi, jinekolojik muayene ve kadın sağlığı danışmanlığı konularında uzmanlaşmıştır.",    fees: 600,
     address: {
-      line1: "27th Cross, Richmond",
+      line1: "Bağdat Caddesi No: 112",
       line2: "Circle, Ring Road, London",
     },
   },
@@ -92,30 +91,29 @@ export const doctors = [
     _id: "doc3",
     name: "Dr. Mehmet Demir",
     image: doc3,
-    speciality: "Dermatolog", // Dermatologist
+    speciality: "Dermatoloji", // Dermatologist
     degree: "MBBS",
     experience: "1 Yıl",
     about:
-      "Dr. Mehmet Demir, kapsamlı tıbbi bakım sunmaya güçlü bir bağlılığa sahiptir; önleyici tıp, erken teşhis ve etkili tedavi stratejilerine odaklanır.",
-    fees: 30,
+  "Dr. Mehmet Demir, cilt hastalıklarının teşhis ve tedavisinde uzman bir dermatologdur. Akne, egzama, alerjik reaksiyonlar ve estetik dermatoloji uygulamaları üzerine yoğun deneyime sahiptir.",    fees: 500,
     address: {
-      line1: "37th Cross, Richmond",
-      line2: "Circle, Ring Road, London",
+      line1: "Valikonağı Caddesi No: 48",
+      line2: "Kat 2, Şişli, İstanbul",
     },
   },
   {
     _id: "doc4",
     name: "Dr. Mehmet Arslan",
     image: doc4,
-    speciality: "ÇocukDoktoru", // Pediatricians
-    degree: "MBBS",
+    speciality: "Çocuk Doktoru", // Pediatricians
+    degree: " Çocuk Sağlığı ve Hastalıkları Uzmanlığı",
     experience: "2 Yıl",
     about:
       "Dr. Ayşe Arslan, kapsamlı tıbbi bakım sunmaya güçlü bir bağlılığa sahiptir; önleyici tıp, erken teşhis ve etkili tedavi stratejilerine odaklanır.",
     fees: 40,
     address: {
-      line1: "47th Cross, Richmond",
-      line2: "Circle, Ring Road, London",
+      line1: "Mimar Sinan Caddesi No: 19",
+      line2: "Daire 4, Üsküdar, İstanbul",
     },
   },
   {
@@ -152,7 +150,7 @@ export const doctors = [
     _id: "doc7",
     name: "Dr. Emre Kaya",
     image: doc7,
-    speciality: "PratisyenHekim",
+    speciality: "Pratisyen Hekim",
     degree: "MBBS",
     experience: "4 Yıl",
     about:
@@ -167,7 +165,7 @@ export const doctors = [
     _id: "doc8",
     name: "Dr. Ömer Demir",
     image: doc8,
-    speciality: "KadınDoğumUzmanı",
+    speciality: "Kadın Doğum Uzmanı",
     degree: "MBBS",
     experience: "3 Yıl",
     about:
@@ -182,7 +180,7 @@ export const doctors = [
     _id: "doc9",
     name: "Dr. Elif Arslan",
     image: doc9,
-    speciality: "Dermatolog",
+    speciality: "Dermatoloji",
     degree: "MBBS",
     experience: "1 Yıl",
     about:
@@ -197,7 +195,7 @@ export const doctors = [
     _id: "doc10",
     name: "Dr. Camil Kaya",
     image: doc10,
-    speciality: "ÇocukDoktoru",
+    speciality: "Çocuk Doktoru",
     degree: "MBBS",
     experience: "2 Yıl",
     about:
@@ -256,9 +254,9 @@ export const doctors = [
   },
   {
     _id: "doc14",
-    name: "Dr. Ahmet Karaca",
+    name: "Dr. Ahmet Acar",
     image: doc14,
-    speciality: "PratisyenHekim",
+    speciality: "Pratisyen Hekim",
     degree: "Tıp Doktoru (MBBS)",
     experience: "3 Yıl",
     about:
@@ -273,7 +271,7 @@ export const doctors = [
     _id: "doc15",
     name: "Dr. Ayşe Şahin",
     image: doc15,
-    speciality: "Dermatolog",
+    speciality: "Dermatoloji",
     degree: "Tıp Doktoru (MBBS)",
     experience: "1 Yıl",
     about:
@@ -289,27 +287,24 @@ export const doctors = [
 
 export const specialityData = [
   {
-    speciality: "General physician",
+    speciality: "Pratisyen Hekim",
     image: General_physician,
   },
   {
-    speciality: "Gynecologist",
+    speciality: "Kadın Doğum Uzmanı",
     image: Gynecologist,
   },
   {
-    speciality: "Dermatologist",
+    speciality: "Dermatoloji",
     image: Dermatologist,
   },
   {
-    speciality: "Pediatricians",
+    speciality: "Çocuk Doktoru",
     image: Pediatricians,
   },
   {
-    speciality: "Neurologist",
+    speciality: "Nörolog",
     image: Neurologist,
   },
-  {
-    speciality: "Gastroenterologist",
-    image: Gastroenterologist,
-  },
+
 ];

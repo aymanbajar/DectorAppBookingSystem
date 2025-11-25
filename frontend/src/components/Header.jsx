@@ -14,7 +14,7 @@ export default function Header(){
               src={assets.group_profiles}
               alt=" group profiles"
             />
-            <p>
+            <p className="text-sm md:text-base lg:text-lg">
               Güvenilir doktorlardan oluşan geniş listemize göz atın,{" "}
               <br className="hidden sm:block" />
               randevunuzu zahmetsizce planlayın

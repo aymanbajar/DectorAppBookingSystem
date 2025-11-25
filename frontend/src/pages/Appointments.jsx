@@ -190,19 +190,19 @@ export default function Appointments() {
         {/* Booking slots */}
         <div className="sm:ml-72 sm:pl-4 mt-4 text-gray-700">
           <p>Randevu saatleri</p>
-          <div className="flex gap-3 items-center w-full overflow-x-scroll mt-4">
+          <div className="flex gap-3 items-center w-full overflow-x-scroll-hidden mt-4">
             {docSlots.length > 0 &&
               docSlots.map((item, index) => (
                 <div
                   onClick={() => setSlotIndex(index)}
                   key={index}
-                  className={`text-center py-6 min-w-16 rounded-full cursor-pointer ${
+                  className={`text-center py-6 min-w-16 rounded-full cursor-pointer  ${
                     slotIndex === index
                       ? "bg-blue-700 text-white"
                       : "border border-gray-200"
                   }`}
                 >
-                  <p className="font-medium text-block">
+                  <p className="font-medium text-block ">
                     {item[0] && daysOfWeek[item[0].datetime.getDay()]}{" "}
                   </p>
                   <p className="text-sm">

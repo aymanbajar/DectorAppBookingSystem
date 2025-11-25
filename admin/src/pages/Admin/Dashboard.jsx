@@ -14,7 +14,7 @@ export default function Dashboard(){
     },[aToken])
 
     return dashData &&(
-        <div className="m-5">
+        <div className="m-5 font-serif">
             <div className="flex flex-wrap gap-3">
 
              <div className='flex items-center gap-2 bg-white min-w-52 rounded border-2 border-gray-100 cursor-pointer hover:scale-105 transition-all'>
@@ -59,8 +59,10 @@ export default function Dashboard(){
                                 <p className='text-gray-800 font-medium'>{item.docData.name}</p>
                                 <p className='text-gray-600'>{slotDateFormat(item.sloteDate)} | {item.sloteTime}</p>
                             </div>
-                             {item.cancelled ? (
-                                <p className="text-red-700 text-xs font-medium">İptal Edildi</p>
+                              {item.cancelled ? (
+                                <p className="text-red-500 text-xs font-medium">İptal Edildi</p>
+                            ) :item.isCompleted ? (
+                                <p className="text-green-500 text-xs font-medium">Tamamlandı</p>
                             ) : (
                                 <img onClick={() => cancelAppointment(item._id)} className="w-10 cursor-pointer" src={assets.cancel_icon} alt="" />
                             )}

@@ -5,36 +5,38 @@ import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 export default function DoctorProfile() {
-  const { dToken, profileData, setProfileData, getProfileData ,backendUrl } =
+  const { dToken, profileData, setProfileData, getProfileData, backendUrl } =
     useContext(DoctorContext);
   const { currency } = useContext(AppContext);
   const [isEdit, setIsEdit] = useState(false);
   const updateProfile = async () => {
-    try{
-      const updateData ={
-        address :profileData.address,
-        fees :profileData.fees,
-        isAvailable :profileData.isAvailable,
-      }
-      const {data} = await axios.post(`${backendUrl}/api/doctor/update-profile`, updateData,{
-        headers:{
-            'Authorization': `Bearer ${dToken}`
+    try {
+      const updateData = {
+        address: profileData.address,
+        fees: profileData.fees,
+        isAvailable: profileData.isAvailable,
+      };
+      const { data } = await axios.post(
+        `${backendUrl}/api/doctor/update-profile`,
+        updateData,
+        {
+          headers: {
+            Authorization: `Bearer ${dToken}`,
+          },
         }
-      });
-      if(data.success){
+      );
+      if (data.success) {
         toast.success(data.message);
         setIsEdit(false);
         getProfileData();
-      }else{
+      } else {
         toast.error("Profil güncellenemedi");
-      } 
-
-    }catch(error){
+      }
+    } catch (error) {
       toast.error(error.message);
       console.log(error);
-      
     }
-  }
+  };
 
   useEffect(() => {
     if (dToken) {
@@ -45,7 +47,7 @@ export default function DoctorProfile() {
   return (
     profileData && (
       <div>
-        <div className="flex flex-col gap-4 m-5">
+        <div className="flex flex-col gap-4 m-5 font-serif">
           <div>
             <img
               className="bg-blue-500 w-full sm:max-w-64 rounded-lg"
@@ -59,7 +61,7 @@ export default function DoctorProfile() {
             </p>
             <div className="flex items-center gap-2 mt-1 text-gray-600">
               <p>
-                {profileData.degree} - {profileData.speciality}
+                {profileData.degree} - {profileData.speciality} -{" "}
                 <button className="py-0.5 px-2 border text-xs rounded-full">
                   {profileData.experience}
                 </button>
@@ -68,10 +70,11 @@ export default function DoctorProfile() {
 
             <div>
               <p className="flex items-center gap-1 text-sm font-medium text-neutral-800 mt-3">
-                Hakkında :
-              </p>
-              <p className="text-sm text-gray-600 font-medium mt-4">
-                {profileData.about}
+                <p> Hakkında :</p>
+
+                <p className="text-sm text-gray-600 font-medium ">
+                  {profileData.about}
+                </p>
               </p>
             </div>
             <p>

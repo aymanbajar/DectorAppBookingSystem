@@ -42,18 +42,18 @@ export default function About(){
           </p>
         </div>
         <div className="flex flex-col md:flex-row mb-20 ">
-          <div className="border px-10 md:px-16 py-8 sm:py-16 flex flex-col gap-5  text-[15px] hover:bg-blue-700 transition-all duration-300 text-black cursor-pointer">
+          <div className="border px-8 md:px-8 py-8 sm:py-16 flex flex-col gap-5  text-[20px] hover:bg-blue-700 hover:text-white transition-all duration-300 text-black cursor-pointer">
             <b>Verimlilik</b>
             <p>
               Yoğun yaşam tarzınıza uyacak şekilde düzenlenmiş, hızlı ve
               sorunsuz randevu planlaması.
             </p>
           </div>
-          <div className="border px-10 md:px-16 py-8 sm:py-16 flex flex-col gap-5  text-[15px] hover:bg-blue-700 transition-all duration-300 text-black cursor-pointer">
+          <div className="border px-8 md:px-8 py-8 sm:py-16 flex flex-col gap-5  text-[20px] hover:bg-blue-700 hover:text-white transition-all duration-300 text-black cursor-pointer">
             <b>Kolaylık</b>
             <p>Bölgenizdeki güvenilir sağlık profesyonellerine kolay erişim.</p>
           </div>
-          <div className="border px-10 md:px-16 py-8 sm:py-16 flex flex-col gap-5  text-[15px] hover:bg-blue-700 transition-all duration-300 text-black cursor-pointer">
+          <div className="border px-8 md:px-8 py-8 sm:py-16 flex flex-col gap-5  text-[20px] hover:bg-blue-700 hover:text-white transition-all duration-300 text-black cursor-pointer">
             <b>Kişiselleştirme</b>
             <p>
               Sağlığınızı takip etmenize yardımcı olacak, size özel öneriler ve

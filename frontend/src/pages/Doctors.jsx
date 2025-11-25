@@ -19,12 +19,11 @@ export default function Doctors() {
 
   // دالة مساعدة لسهولة التكرار
   const specialities = [
-    { key: "PratisyenHekim", label: "Pratisyen Hekim" },
-    { key: "KadınDoğumUzmanı", label: "Kadın Doğum Uzmanı" },
-    { key: "Dermatolog", label: "Dermatolog" },
-    { key: "ÇocukDoktoru", label: "Çocuk Doktoru" },
+    { key: "Pratisyen-Hekim", label: "Pratisyen Hekim" },
+    { key: "Kadın-Doğum-Uzmanı", label: "Kadın Doğum Uzmanı" },
+    { key: "Dermatoloji", label: "Dermatoloji" },
+    { key: "Çocuk-Doktoru", label: "Çocuk Doktoru" },
     { key: "Nörolog", label: "Nörolog" },
-    { key: "Gastroenterolog", label: "Gastroenterolog" },
   ];
 
   return (
@@ -69,9 +68,9 @@ export default function Doctors() {
             >
               <img className="bg-gray-50" src={item.image} alt={item.name} />
               <div className="p-4">
-                <div className="flex items-center gap-2 text-xl text-green-500">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  <p>Müsait</p>
+                  <div className={`flex items-center  gap-2 text-xl text-center ${item.available ? 'text-green-500' : 'text-gray-500'}`}>
+                  <p className={`w-2 h-2 ${item.available ? 'bg-green-500' : 'bg-gray-500'} rounded-full`}></p>
+                  <p>{item.available ? 'Müsait' : 'Müsait Değil'}</p>
                 </div>
                 <p className="text-gray-900 text-lg">{item.name}</p>
                 <p className="text-gray-900 text-lg">{item.speciality}</p>

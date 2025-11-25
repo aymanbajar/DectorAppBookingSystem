@@ -76,12 +76,12 @@ export default function Navbar() {
         {token && userData ? (
           <div className=" flex items-center gap-2 cursor-pointer group  relative">
             <img
-              className="w-8 rounded-full"
+              className="w-12 rounded-full"
               src={userData.image || profileLogo}
               alt="profile logo"
             />
             <img
-              className="w-2.5"
+              className="w-4"
               src={assets.dropdown_icon}
               alt="dropdown icon"
             />

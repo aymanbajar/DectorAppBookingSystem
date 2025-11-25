@@ -139,11 +139,11 @@ const appointmentRazorpay = async(appointmentId) => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6 font-serif">
         Randevularım
       </h2>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-6 md:grid-cols-1">
         {Appointments.map((item, index) => (
           <div
             key={index}
@@ -176,20 +176,20 @@ const appointmentRazorpay = async(appointmentId) => {
 
             {/* أزرار الإجراءات */}
             <div className="flex flex-row sm:flex-col gap-2 p-4">
-              {!item.cancelled && item.payment && <button className="sm:min-w-48 py-2 border rounded text-stone-500 bg-indigo-50">ödendi</button>}
-            {!item.cancelled &&   <button
+              {!item.cancelled && item.payment && !item.isCompleted && <button className="sm:min-w-48 py-2 border rounded text-stone-500 bg-indigo-50">ödendi</button>}
+            {!item.cancelled &&  !item.payment && !item.isCompleted && <button
               onClick={() => appointmentRazorpay(item._id)}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                Çevrimiçi Öde
+                Online Öde
               </button>}
-              {!item.cancelled && !item.payment && <button 
+              {!item.cancelled &&  !item.isCompleted && <button 
               onClick={() => cancelAppointment(item._id)}
               className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors">
                 Randevuyu İptal Et
               </button> }
 
-              {item.cancelled && <button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500' >Randevuyu İptal Edildi</button>}
-             
+              {item.cancelled && !item.isCompleted && <button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500' >Randevuyu İptal Edildi</button>}
+             { item.isCompleted && <button className='sm:min-w-48 py-2 border border-green-500 rounded text-green-500 bg-green-50' >Randevu Tamamlandı</button>}
             </div>
           </div>
         ))}

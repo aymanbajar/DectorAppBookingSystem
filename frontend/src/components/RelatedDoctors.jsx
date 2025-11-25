@@ -35,9 +35,9 @@ export default function RelatedDoctors({speciality,docId}) {
             >
               <img className="bg-gray-50" src={item.image} alt=" item image" />
               <div className="p-4">
-                <div className="flex items-center  gap-2 text-xl text-center text-green-500">
-                  <p className="w-2 h-2 bg-green-500 rounded-full"></p>{" "}
-                  <p>Müsait</p>
+                  <div className={`flex items-center  gap-2 text-xl text-center ${item.available ? 'text-green-500' : 'text-gray-500'}`}>
+                  <p className={`w-2 h-2 ${item.available ? 'bg-green-500' : 'bg-gray-500'} rounded-full`}></p>
+                  <p>{item.available ? 'Müsait' : 'Müsait Değil'}</p>
                 </div>
                 <p className="text-gray-900 text-lg ">{item.name}</p>
                 <p className="text-gray-900 text-lg ">{item.speciality}</p>

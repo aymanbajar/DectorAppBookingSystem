@@ -67,19 +67,19 @@ export default function AddDoctor() {
         }
     }
   return (
-    <form onSubmit={onSubmitHandler} className="m-5 w-full">
+    <form onSubmit={onSubmitHandler} className="m-5 w-full font-serif">
       <p className="mb-3 text-2xl font-bold bg-gradient-to-r from-indigo-600 to-blue-500 bg-clip-text text-transparent"> Doktor Ekleme Formu</p>
-      <div className="bg-white px-8 py-8 border-2 border-gray-200 rounded-xl w-full max-w-4xl max-h[80vh] overflow-y-scroll shadow-lg hover:shadow-xl transition-shadow duration-300">
+      <div className="bg-white px-8 py-8 border-2 border-gray-200 rounded-xl w-full max-w-4xl max-h[80vh] overflow-y-scroll-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
         <div className="flex items-center gap-4 mb-8 text-gray-600">
           <label htmlFor="doc-img" className="group cursor-pointer">
             <img
-              className="w-20 h-20 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full cursor-pointer border-2 border-dashed border-indigo-300 p-2 group-hover:border-indigo-500 group-hover:scale-105 transition-all duration-200"
+              className="w-20 h-20 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-full cursor-pointer border-2 border border-indigo-300 p-2 group-hover:border-indigo-500 group-hover:scale-105 transition-all duration-200"
               src={docImg ? URL.createObjectURL(docImg) :assets.upload_area}
               alt=""
             />
           </label>
           <input onChange={(e) => setDocImg(e.target.files[0])} type="file" id="doc-img" hidden />
-          <p className="font-medium">
+          <p className="font-medium text-xl">
             Doktorun resmini <br />
             yükleyin
           </p>
@@ -161,14 +161,13 @@ export default function AddDoctor() {
             value={speciality}
             
             className="border-2 border-gray-200 rounded-lg px-4 py-3 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all duration-200 cursor-pointer bg-white" name="" id="">
-              <option value="Cardiology">Kardiyoloji</option>
-              <option value="Dermatology">Dermatoloji</option>
-              <option value="Neurology">Nöroloji</option>
-              <option value="Pediatrics">Pediatri</option>
+              <option value="Pratisyen Hekim ">Pratisyen Hekim</option>
+              <option value="Dermatoloji">Dermatoloji</option>
+              <option value="Nöroloji">Nöroloji</option>
+              <option value="Kadın Doğum Uzmanı">Kadın Doğum Uzmanı</option>
               <option value="Psychiatry">Psikiyatri</option>
-              <option value="Radiology">Radyoloji</option>
-              <option value="Surgery">Cerrahi</option>
-              <option value="Urology">Üroloji</option>
+              <option value="Çocuk Doktoru">Çocuk Doktoru</option>
+              <option value="Üroloji">Üroloji</option>
             </select>
 
             <div className="flex-1 flex flex-col gap-1">

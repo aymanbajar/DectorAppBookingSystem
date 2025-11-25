@@ -7,7 +7,7 @@ export default function Sidebar(){
     const{aToken} =  useContext(AdminContext);
     const{dToken} =  useContext(DoctorContext);
     return(
-        <div className="min-h-[150vh] bg-white border-r">
+        <div className="min-h-[160vh] bg-white border-r font-serif font-bold">
 
         {
             aToken && <ul className="text-[#515151] mt-5">
