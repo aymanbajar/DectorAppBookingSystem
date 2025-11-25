@@ -15,28 +15,28 @@ export default function Sidebar(){
                     className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
                 >
                     <img src={assets.home_icon} alt="" />
-                    <span>panel</span>
+                    <span className="hidden md:block" >panel</span>
                 </NavLink>
                 
                 <NavLink
                     className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
                 to={"/all-appointments"}>
                     <img src={assets.appointment_icon} alt="" />
-                    <span>randavular</span>
+                    <span className="hidden md:block">randavular</span>
                 </NavLink>
                 
                 <NavLink
                     className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
                 to={"/add-doctor"}>
                     <img src={assets.add_icon} alt="" />
-                    <span>Dokror ekle</span>
+                    <span className="hidden md:block">Dokror ekle</span>
                 </NavLink>
                 
                 <NavLink 
                     className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
                 to={"/doctor-list"}>
                     <img src={assets.people_icon} alt="" />
-                    <span>Doktorlar </span>
+                    <span className="hidden md:block">Doktorlar </span>
                 </NavLink>
             </ul>
         }
@@ -46,14 +46,14 @@ export default function Sidebar(){
                     className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
                 >
                     <img src={assets.home_icon} alt="" />
-                    <span>panel</span>
+                    <span className="hidden md:block">panel</span>
                 </NavLink>
                 
                 <NavLink
                     className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
                 to={"/doctor-appointments"}>
                     <img src={assets.appointment_icon} alt="" />
-                    <span>randavular</span>
+                    <span className="hidden md:block" >randavular</span>
                 </NavLink>
                 
               
@@ -62,7 +62,7 @@ export default function Sidebar(){
                     className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
                 to={"/doctor-profile"}>
                     <img src={assets.people_icon} alt="" />
-                    <span>Profil </span>
+                    <span className="hidden md:block">Profil </span>
                 </NavLink>
             </ul>
         }

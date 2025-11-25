@@ -3,6 +3,8 @@ import { createContext } from "react";
 export const  AppContext = createContext();
 
 const AppContextProvider =(props) => {
+    const currency = '₺'; // Turkish Lira symbol
+    
     const calculateAge = (dob) => {
         const today  =  new Date();
         const birtDate = new Date(dob);
@@ -34,7 +36,7 @@ const AppContextProvider =(props) => {
     );
   };
 
-    const value = { calculateAge, slotDateFormat     }
+    const value = { calculateAge, slotDateFormat, currency }
 
     return(
         <AppContext.Provider value={value}>

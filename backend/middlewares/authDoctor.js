@@ -11,7 +11,7 @@ const authDoctor = async (req, res, next) => {
 
     // تحقق من صحة التوكن
     const tokenDecode = jwt.verify(dtoken, process.env.JWT_SECRET);
-    req.body.docId = tokenDecode.id;
+    req.docId = tokenDecode.id;
 
     // مرّر للـ route التالي
     next();
