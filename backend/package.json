@@ -12,6 +12,9 @@
     "server": "nodemon server.js",
         "start": "node server.js"           
   },
+  "engines": {
+  "node": "20.x"
+},
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cloudinary": "^2.7.0",
