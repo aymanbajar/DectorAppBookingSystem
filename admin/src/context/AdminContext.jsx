@@ -7,6 +7,7 @@ export const  AdminContext = createContext();
 const AdminContextProvider =(props) => {
     const [aToken,setAToken] = useState(localStorage.getItem('aToken') );
     const[doctors,setDoctors] = useState([]);
+    const[patients,setPatients] = useState([]);
     const[appointments,setAppointments] = useState([]);
     const[dashData,setDashData] = useState(false);
     const backendURL = import.meta.env.VITE_BACKEND_URL;
@@ -47,6 +48,89 @@ const AdminContextProvider =(props) => {
         } catch (error) {
             toast.error('Bir hata oluştu');
             console.log(error);
+        }
+    }
+    const getAllPatients = async () => {
+        try {
+            const { data } = await axios.get(`${backendURL}/api/admin/patients`, {
+                headers: { Authorization: `Bearer ${aToken}` }
+            });
+            data.success ? setPatients(data.patients) : toast.error("Hastalar alınamadı");
+        } catch (error) {
+            toast.error("Hastalar alınamadı");
+            console.log(error);
+        }
+    }
+
+    const updateDoctor = async (docId, formData) => {
+        try {
+            const { data } = await axios.post(`${backendURL}/api/admin/update-doctor/${docId}`, formData, {
+                headers: { Authorization: `Bearer ${aToken}` }
+            });
+            if (data.success) {
+                toast.success(data.message);
+                getAllDoctors();
+                return true;
+            }
+            toast.error(data.message || "Doktor güncellenemedi");
+            return false;
+        } catch (error) {
+            toast.error("Doktor güncellenemedi");
+            console.log(error);
+            return false;
+        }
+    }
+
+    const deleteDoctor = async (docId) => {
+        try {
+            const { data } = await axios.delete(`${backendURL}/api/admin/doctor/${docId}`, {
+                headers: { Authorization: `Bearer ${aToken}` }
+            });
+            if (data.success) {
+                toast.success(data.message);
+                getAllDoctors();
+            } else {
+                toast.error(data.message || "Doktor silinemedi");
+            }
+        } catch (error) {
+            toast.error("Doktor silinemedi");
+            console.log(error);
+        }
+    }
+
+    const deletePatient = async (userId) => {
+        try {
+            const { data } = await axios.delete(`${backendURL}/api/admin/patient/${userId}`, {
+                headers: { Authorization: `Bearer ${aToken}` }
+            });
+            if (data.success) {
+                toast.success(data.message);
+                getAllPatients();
+            } else {
+                toast.error(data.message || "Hasta silinemedi");
+            }
+        } catch (error) {
+            toast.error("Hasta silinemedi");
+            console.log(error);
+        }
+    }
+
+    const updatePatient = async (userId, payload) => {
+        try {
+            const { data } = await axios.post(`${backendURL}/api/admin/update-patient/${userId}`, payload, {
+                headers: { Authorization: `Bearer ${aToken}` }
+            });
+            if (data.success) {
+                toast.success(data.message);
+                getAllPatients();
+                return true;
+            }
+            toast.error(data.message || "Hasta güncellenemedi");
+            return false;
+        } catch (error) {
+            toast.error("Hasta güncellenemedi");
+            console.log(error);
+            return false;
         }
     }
     const getAllAppointments = async () => {
@@ -114,8 +198,14 @@ const getDashData = async() => {
         setAToken,
         backendURL,
         doctors,
+        patients,
         getAllDoctors,
+        getAllPatients,
         changeAvailability,
+        updateDoctor,
+        deleteDoctor,
+        deletePatient,
+        updatePatient,
         appointments,
         setAppointments,
         getAllAppointments,

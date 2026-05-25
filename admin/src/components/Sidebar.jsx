@@ -13,11 +13,14 @@ export default function Sidebar() {
     { to: "/all-appointments", icon: assets.appointment_icon, label: "Randevular" },
     { to: "/add-doctor", icon: assets.add_icon, label: "Doktor Ekle" },
     { to: "/doctor-list", icon: assets.people_icon, label: "Doktorlar" },
+    { to: "/patient-list", icon: assets.people_icon, label: "Hastalar" },
+    { to: "/admin-center", icon: assets.list_icon, label: "Yönetim" },
   ];
 
   const doctorLinks = [
     { to: "/doctor-dashboard", icon: assets.home_icon, label: "Panel" },
     { to: "/doctor-appointments", icon: assets.appointment_icon, label: "Randevular" },
+    { to: "/doctor-patients", icon: assets.people_icon, label: "Hastalarım" },
     { to: "/doctor-chat", icon: assets.chats_icon || assets.appointment_icon, label: "Mesajlar" },
     { to: "/doctor-notifications", icon: assets.list_icon, label: "Bildirimler" },
     { to: "/doctor-profile", icon: assets.people_icon, label: "Profil" },

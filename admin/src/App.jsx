@@ -8,6 +8,8 @@ import Sidebar from "./components/Sidebar";
 import { Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Admin/Dashboard";
 import DoctorList from "./pages/Admin/DoctorList";
+import PatientList from "./pages/Admin/PatientList";
+import AdminCenter from "./pages/Admin/AdminCenter";
 import AddDoctor from "./pages/Admin/AddDoctor";
 import AllApointments from "./pages/Admin/AllApointments";
 import { DoctorContext } from "./context/DoctorContext.jsx";
@@ -16,6 +18,8 @@ import DoctorAppoinments from "./pages/Doctor/DoctorAppoinments";
 import DoctorProfile from "./pages/Doctor/DoctorProfile";
 import DoctorChat from "./pages/Doctor/DoctorChat";
 import DoctorNotifications from "./pages/Doctor/DoctorNotifications";
+import DoctorPatients from "./pages/Doctor/DoctorPatients";
+import DoctorPatientDetails from "./pages/Doctor/DoctorPatientDetails";
 function App() {
   const { aToken } = useContext(AdminContext);
   const { dToken } = useContext(DoctorContext);
@@ -32,6 +36,8 @@ function App() {
             <Route path="/" element={<></>} />
             <Route path="/admin-dashboard" element={<Dashboard />} />
             <Route path="/doctor-list" element={<DoctorList />} />
+            <Route path="/patient-list" element={<PatientList />} />
+            <Route path="/admin-center" element={<AdminCenter />} />
             <Route path="/add-doctor" element={<AddDoctor />} />
             <Route path="/all-appointments" element={<AllApointments />} />
 
@@ -40,6 +46,8 @@ function App() {
             <Route path="/doctor-appointments" element={<DoctorAppoinments />} />
             <Route path="/doctor-profile" element={<DoctorProfile />} />
             <Route path="/doctor-chat" element={<DoctorChat />} />
+            <Route path="/doctor-patients" element={<DoctorPatients />} />
+            <Route path="/doctor-patient/:userId" element={<DoctorPatientDetails />} />
             <Route path="/doctor-notifications" element={<DoctorNotifications />} />
           </Routes>
         </main>

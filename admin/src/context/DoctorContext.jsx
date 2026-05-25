@@ -43,6 +43,21 @@ const DoctorContextProvider = (props) => {
   const confirmAppointment = (appointmentId) => postAppointmentAction("confirm-appointment", appointmentId, "Randevu onaylandı");
   const rejectAppointment = (appointmentId) => postAppointmentAction("reject-appointment", appointmentId, "Randevu reddedildi");
 
+  const updateAppointmentStatus = async (appointmentId, status) => {
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/doctor/appointment/${appointmentId}/status`, { status }, { headers: authHeaders });
+      if (data.success) {
+        toast.success(data.message || "Randevu durumu güncellendi");
+        getAppointments();
+      } else {
+        toast.error(data.message || "Durum güncellenemedi");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Durum güncellenemedi");
+    }
+  };
+
   const getDashData = async () => {
     try {
       const { data } = await axios.get(`${backendUrl}/api/doctor/dashboard`, { headers: authHeaders });
@@ -74,6 +89,7 @@ const DoctorContextProvider = (props) => {
     cancelAppointment,
     confirmAppointment,
     rejectAppointment,
+    updateAppointmentStatus,
     dashData,
     getDashData,
     setDashData,

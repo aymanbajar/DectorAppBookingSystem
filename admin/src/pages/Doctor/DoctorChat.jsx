@@ -1,31 +1,24 @@
 import axios from "axios";
 import { useContext, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { DoctorContext } from "../../context/DoctorContext";
+
+const quickReplies = [
+  "Lütfen tahlil sonuçlarınızı gönderin.",
+  "Randevunuz onaylandı, görüşmek üzere.",
+  "Şikayetiniz devam ederse tekrar kontrol randevusu oluşturalım.",
+  "İlaçlarınızı reçetede belirtilen şekilde kullanın.",
+];
 
 export default function DoctorChat() {
   const { backendUrl, dToken } = useContext(DoctorContext);
   const [chats, setChats] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [text, setText] = useState("");
+  const [searchParams] = useSearchParams();
   const bottomRef = useRef(null);
-
-  const fetchChats = async () => {
-    try {
-      const { data } = await axios.get(`${backendUrl}/api/doctor/chats`, {
-        headers: { Authorization: `Bearer ${dToken}` },
-      });
-      if (data.success) {
-        setChats(data.chats);
-        if (!selectedChat && data.chats[0]) setSelectedChat(data.chats[0]);
-      } else {
-        toast.error("Sohbetler alınamadı");
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Sohbetler alınamadı");
-    }
-  };
+  const requestedUserId = searchParams.get("userId");
 
   const fetchChat = async (userId) => {
     try {
@@ -37,6 +30,24 @@ export default function DoctorChat() {
     } catch (error) {
       console.log(error);
       toast.error("Sohbet yüklenemedi");
+    }
+  };
+
+  const fetchChats = async () => {
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/doctor/chats`, {
+        headers: { Authorization: `Bearer ${dToken}` },
+      });
+      if (data.success) {
+        setChats(data.chats);
+        if (requestedUserId) fetchChat(requestedUserId);
+        else if (!selectedChat && data.chats[0]) setSelectedChat(data.chats[0]);
+      } else {
+        toast.error("Sohbetler alınamadı");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Sohbetler alınamadı");
     }
   };
 
@@ -127,8 +138,17 @@ export default function DoctorChat() {
               </div>
 
               <form onSubmit={sendMessage} className="flex gap-3 border-t border-slate-200 p-4">
-                <input value={text} onChange={(event) => setText(event.target.value)} className="admin-input" placeholder="Mesajınızı yazın..." />
-                <button className="admin-button px-6">Gönder</button>
+                <div className="flex-1">
+                  <div className="mb-3 flex flex-wrap gap-2">
+                    {quickReplies.map((reply) => (
+                      <button key={reply} type="button" onClick={() => setText(reply)} className="rounded-full bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 hover:bg-cyan-100">
+                        {reply}
+                      </button>
+                    ))}
+                  </div>
+                  <input value={text} onChange={(event) => setText(event.target.value)} className="admin-input" placeholder="Mesajınızı yazın..." />
+                </div>
+                <button className="admin-button self-end px-6">Gönder</button>
               </form>
             </>
           ) : (
