@@ -104,7 +104,7 @@ const token = jwt.sign(
 );
       res.json({ success: true, token });
     } else {
-      res.json({ success: false, message: error.message });
+      res.json({ success: false, message: "Invalid email or password" });
     }
   } catch (error) {
     console.log(error);

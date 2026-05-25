@@ -2,6 +2,7 @@ import doctorModel from "../models/doctorModel.js";
 import bycrpyt from "bcrypt";
 import jwt from "jsonwebtoken";
 import appointmentModel from "../models/appointmentModel.js";
+import { createNotification } from "./notificationController.js";
 const changeAvailablity = async (req, res) => {
   try {
     const { docId } = req.body;
@@ -97,6 +98,14 @@ const appointmentComplete = async (req, res) => {
       {
         await appointmentModel.findByIdAndUpdate(appointmentId, {
           isCompleted: true,
+          status: "completed",
+        });
+        await createNotification({
+          recipientType: "user",
+          recipientId: appointmentData.userId,
+          title: "Randevu tamamlandı",
+          message: `${appointmentData.docData.name} ile randevunuz tamamlandı. Dilerseniz doktoru değerlendirebilirsiniz.`,
+          link: "/my-appointments"
         });
         return res.json({
           success: true,
@@ -126,6 +135,14 @@ const appointmentCancel = async (req, res) => {
       {
         await appointmentModel.findByIdAndUpdate(appointmentId, {
           cancelled: true,
+          status: "cancelled",
+        });
+        await createNotification({
+          recipientType: "user",
+          recipientId: appointmentData.userId,
+          title: "Randevu iptal edildi",
+          message: `${appointmentData.docData.name} randevunuzu iptal etti.`,
+          link: "/my-appointments"
         });
         return res.json({
           success: true,
@@ -143,6 +160,57 @@ const appointmentCancel = async (req, res) => {
       success: false,
       message: error.message,
     });
+  }
+};
+
+const appointmentConfirm = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const docId = req.docId;
+    const appointmentData = await appointmentModel.findById(appointmentId);
+    if (appointmentData && appointmentData.docId === docId) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, { status: "confirmed" });
+      await createNotification({
+        recipientType: "user",
+        recipientId: appointmentData.userId,
+        title: "Randevunuz onaylandı",
+        message: `${appointmentData.docData.name} randevunuzu onayladı.`,
+        link: "/my-appointments"
+      });
+      return res.json({ success: true, message: "Randevu onaylandı" });
+    }
+    return res.json({ success: false, message: "Randevu onaylanamadı" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const appointmentReject = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const docId = req.docId;
+    const appointmentData = await appointmentModel.findById(appointmentId);
+    if (appointmentData && appointmentData.docId === docId) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, { status: "rejected", cancelled: true });
+      const docData = await doctorModel.findById(docId);
+      if (docData?.slots_booked?.[appointmentData.sloteDate]) {
+        docData.slots_booked[appointmentData.sloteDate] = docData.slots_booked[appointmentData.sloteDate].filter((slot) => slot !== appointmentData.sloteTime);
+        await doctorModel.findByIdAndUpdate(docId, { slots_booked: docData.slots_booked });
+      }
+      await createNotification({
+        recipientType: "user",
+        recipientId: appointmentData.userId,
+        title: "Randevu isteğiniz reddedildi",
+        message: `${appointmentData.docData.name} randevu isteğinizi reddetti.`,
+        link: "/my-appointments"
+      });
+      return res.json({ success: true, message: "Randevu reddedildi" });
+    }
+    return res.json({ success: false, message: "Randevu reddedilemedi" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
   }
 };
 
@@ -234,6 +302,8 @@ export {
   appointmentsDoctor,
   appointmentComplete,
     appointmentCancel,
+    appointmentConfirm,
+    appointmentReject,
     doctorDashboard,
     doctorProfile,
     updateDoctorProfile

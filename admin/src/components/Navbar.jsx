@@ -1,37 +1,39 @@
 import { assets } from "../assets/assets";
 import { useContext } from "react";
 import { AdminContext } from "../context/AdminContext";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { DoctorContext } from "../context/DoctorContext";
 
 export default function Navbar() {
-    const {aToken, setAToken} = useContext(AdminContext);
-    const {dToken, setDToken} = useContext(DoctorContext);
-    const navigate = useNavigate();
-    const logout = () => {
-        navigate('/');
+  const { aToken, setAToken } = useContext(AdminContext);
+  const { dToken, setDToken } = useContext(DoctorContext);
+  const navigate = useNavigate();
 
-        aToken && setAToken('');
-        aToken && localStorage.removeItem('aToken');
-        dToken && setDToken('');
-        dToken && localStorage.removeItem('dToken');
+  const logout = () => {
+    navigate("/");
+    if (aToken) {
+      setAToken("");
+      localStorage.removeItem("aToken");
     }
-    return (
-        <div className="flex justify-between items-center px-4 sm:px-10 py-3 border-b border-gray-300 bg-white font-serif">
-            <div className="flex items-center gap-2 text-xs">
-                <img 
-                    src={assets.admin_logo} 
-                    alt='admin logo' 
-                    className="h-12 w-auto object-contain hover:scale-105 transition-transform duration-200"
-                />
-                <p className="border px-2.5 py-0.5 rounded-full border-gray-500 text-gray-600 ">
-                    {aToken ? 'Admin' : 'Dok tor'}
-                </p>
-              
-            </div>
-              <button onClick={logout} className="bg-blue-600 text-white text-sm px-10 py-2 rounded-full font-bold">
-                    Çıkış Yap
-                </button>
+    if (dToken) {
+      setDToken("");
+      localStorage.removeItem("dToken");
+    }
+  };
+
+  return (
+    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur-xl">
+      <div className="flex h-20 items-center justify-between px-4 sm:px-8">
+        <div className="flex items-center gap-3">
+          <img src={assets.admin_logo} alt="Admin logo" className="h-12 w-auto object-contain" />
+          <span className="rounded-full border border-cyan-200 bg-cyan-50 px-3 py-1 text-xs font-bold text-cyan-700">
+            {aToken ? "Admin" : "Doktor"}
+          </span>
         </div>
-    )
+        <button onClick={logout} className="admin-button px-6 py-2">
+          Çıkış Yap
+        </button>
+      </div>
+    </header>
+  );
 }

@@ -14,29 +14,35 @@ import { DoctorContext } from "./context/DoctorContext.jsx";
 import DoctorDashboard from "./pages/Doctor/DoctorDashboard";
 import DoctorAppoinments from "./pages/Doctor/DoctorAppoinments";
 import DoctorProfile from "./pages/Doctor/DoctorProfile";
+import DoctorChat from "./pages/Doctor/DoctorChat";
+import DoctorNotifications from "./pages/Doctor/DoctorNotifications";
 function App() {
   const { aToken } = useContext(AdminContext);
   const { dToken } = useContext(DoctorContext);
   return aToken || dToken ? (
-    <div className="bg-[#F8F9FD]">
+    <div className="min-h-screen bg-slate-100">
       <ToastContainer />
       <Navbar />
       <div className="flex items-start">
         <Sidebar />
-        <Routes>
-          {/* Admin Routes */}
-        
-          <Route path="/" element={<></>} />
-          <Route path="/admin-dashboard" element={<Dashboard />} />
-          <Route path="/doctor-list" element={<DoctorList />} />
-          <Route path="/add-doctor" element={<AddDoctor />} />
-          <Route path="/all-appointments" element={<AllApointments />} />
+        <main className="min-w-0 flex-1">
+          <Routes>
+            {/* Admin Routes */}
+          
+            <Route path="/" element={<></>} />
+            <Route path="/admin-dashboard" element={<Dashboard />} />
+            <Route path="/doctor-list" element={<DoctorList />} />
+            <Route path="/add-doctor" element={<AddDoctor />} />
+            <Route path="/all-appointments" element={<AllApointments />} />
 
-          {/* Doctor Routes */}
-          <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
-          <Route path="/doctor-appointments" element={<DoctorAppoinments />} />
-          <Route path="/doctor-profile" element={<DoctorProfile />} />
-        </Routes>
+            {/* Doctor Routes */}
+            <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+            <Route path="/doctor-appointments" element={<DoctorAppoinments />} />
+            <Route path="/doctor-profile" element={<DoctorProfile />} />
+            <Route path="/doctor-chat" element={<DoctorChat />} />
+            <Route path="/doctor-notifications" element={<DoctorNotifications />} />
+          </Routes>
+        </main>
       </div>
     </div>
   ) : (

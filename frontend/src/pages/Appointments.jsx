@@ -15,6 +15,8 @@ export default function Appointments() {
   const [docSlots, setDocSlots] = useState([]);
   const [slotIndex, setSlotIndex] = useState(0);
   const [slotTime, setSlotTime] = useState("");
+  const [visitReason, setVisitReason] = useState("");
+  const [reviewData, setReviewData] = useState({ reviews: [], averageRating: 0, totalReviews: 0 });
 
   const getAvailableSlots = () => {
     if (!docInfo) return;
@@ -73,12 +75,12 @@ export default function Appointments() {
       const slotDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
       const { data } = await axios.post(
         `${backendUrl}/api/user/book-appointment`,
-        { docId, slotDate, slotTime },
+        { docId, slotDate, slotTime, visitReason },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (data.success) {
-        toast.success("Randevu başarıyla alındı");
+        toast.success(data.message || "Randevu isteği gönderildi");
         getDoctorsData();
         navigate("/my-appointments");
       } else {
@@ -98,9 +100,30 @@ export default function Appointments() {
     getAvailableSlots();
   }, [docInfo]);
 
+  useEffect(() => {
+    if (!docInfo?._id) return;
+    const recentDoctors = JSON.parse(localStorage.getItem("recentDoctors") || "[]");
+    const nextRecentDoctors = [docInfo._id, ...recentDoctors.filter((id) => id !== docInfo._id)].slice(0, 8);
+    localStorage.setItem("recentDoctors", JSON.stringify(nextRecentDoctors));
+  }, [docInfo]);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/doctor/reviews/${docId}`);
+        if (data.success) setReviewData(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchReviews();
+  }, [backendUrl, docId]);
+
   if (!docInfo) {
     return <p className="mt-10 text-center text-xl text-slate-600">Doktor bilgileri yükleniyor...</p>;
   }
+
+  const selectedDate = docSlots[slotIndex]?.[0]?.datetime;
 
   return (
     <div className="mx-auto max-w-6xl py-8">
@@ -120,6 +143,7 @@ export default function Appointments() {
               <span className="rounded-full bg-slate-100 px-3 py-1 font-semibold">{docInfo.degree}</span>
               <span className="rounded-full bg-cyan-50 px-3 py-1 font-semibold text-cyan-700">{docInfo.speciality}</span>
               <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">{docInfo.experience}</span>
+              <span className="rounded-full bg-amber-50 px-3 py-1 font-semibold text-amber-700">★ {reviewData.averageRating ? reviewData.averageRating.toFixed(1) : "0.0"} ({reviewData.totalReviews})</span>
             </div>
 
             <div className="mt-4">
@@ -169,9 +193,47 @@ export default function Appointments() {
           ))}
         </div>
 
+        <div className="mt-5 rounded-2xl border border-cyan-100 bg-cyan-50 p-4">
+          <p className="text-sm font-semibold text-cyan-800">Seçilen randevu özeti</p>
+          <div className="mt-3 grid gap-3 text-sm text-slate-700 sm:grid-cols-3">
+            <p><span className="font-bold text-slate-950">Doktor:</span> {docInfo.name}</p>
+            <p><span className="font-bold text-slate-950">Tarih:</span> {selectedDate ? `${selectedDate.getDate()}/${selectedDate.getMonth() + 1}/${selectedDate.getFullYear()}` : "Seçilmedi"}</p>
+            <p><span className="font-bold text-slate-950">Saat:</span> {slotTime || "Seçilmedi"}</p>
+            <p><span className="font-bold text-slate-950">Ücret:</span> {currencySymbol}{docInfo.fees}</p>
+            <p className="sm:col-span-2"><span className="font-bold text-slate-950">Durum:</span> {slotTime ? "Rezervasyon için hazır" : "Lütfen bir saat seçin"}</p>
+          </div>
+        </div>
+
+        <label className="mt-5 block">
+          <span className="mb-2 block text-sm font-semibold text-slate-700">Ziyaret nedeni / doktora not</span>
+          <textarea
+            value={visitReason}
+            onChange={(event) => setVisitReason(event.target.value)}
+            className="form-input min-h-28"
+            placeholder="Şikayetinizi, belirtilerinizi veya doktorun bilmesini istediğiniz notu yazın..."
+          />
+        </label>
+
         <button onClick={bookAppointment} className="btn-primary my-6">
           Randevu al
         </button>
+      </div>
+
+      <div className="surface-card mt-6 p-5 sm:p-6">
+        <h2 className="text-xl font-bold text-slate-950">Hasta yorumları</h2>
+        <div className="mt-4 grid gap-4">
+          {reviewData.reviews.length ? reviewData.reviews.slice(0, 5).map((review) => (
+            <div key={review._id} className="rounded-2xl bg-slate-50 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <p className="font-bold text-slate-950">{review.userName}</p>
+                <span className="rounded-full bg-amber-50 px-3 py-1 text-sm font-bold text-amber-700">★ {review.rating}</span>
+              </div>
+              <p className="mt-2 leading-7 text-slate-600">{review.comment}</p>
+            </div>
+          )) : (
+            <p className="text-slate-500">Bu doktor için henüz yorum yok.</p>
+          )}
+        </div>
       </div>
 
       <RelatedDoctors docId={docId} speciality={docInfo.speciality} />

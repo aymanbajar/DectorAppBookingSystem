@@ -1,72 +1,50 @@
 import { AdminContext } from "../context/AdminContext";
 import { useContext } from "react";
-import { NavLink } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { DoctorContext } from "../context/DoctorContext";
-export default function Sidebar(){
-    const{aToken} =  useContext(AdminContext);
-    const{dToken} =  useContext(DoctorContext);
-    return(
-        <div className="min-h-[160vh] bg-white border-r font-serif font-bold">
 
-        {
-            aToken && <ul className="text-[#515151] mt-5">
-                <NavLink  to={"/admin-dashboard"}
-                    className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
-                >
-                    <img src={assets.home_icon} alt="" />
-                    <span className="hidden md:block" >panel</span>
-                </NavLink>
-                
-                <NavLink
-                    className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
-                to={"/all-appointments"}>
-                    <img src={assets.appointment_icon} alt="" />
-                    <span className="hidden md:block">randavular</span>
-                </NavLink>
-                
-                <NavLink
-                    className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
-                to={"/add-doctor"}>
-                    <img src={assets.add_icon} alt="" />
-                    <span className="hidden md:block">Dokror ekle</span>
-                </NavLink>
-                
-                <NavLink 
-                    className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
-                to={"/doctor-list"}>
-                    <img src={assets.people_icon} alt="" />
-                    <span className="hidden md:block">Doktorlar </span>
-                </NavLink>
-            </ul>
-        }
-         {
-            dToken && <ul className="text-[#515151] mt-5">
-                <NavLink  to={"/doctor-dashboard"}
-                    className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
-                >
-                    <img src={assets.home_icon} alt="" />
-                    <span className="hidden md:block">panel</span>
-                </NavLink>
-                
-                <NavLink
-                    className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
-                to={"/doctor-appointments"}>
-                    <img src={assets.appointment_icon} alt="" />
-                    <span className="hidden md:block" >randavular</span>
-                </NavLink>
-                
-              
-                
-                <NavLink 
-                    className={({isActive}) => `flex items-center gap-3 py-3.5 px-3 md:px-9 md:min-w-72 cursor-pointer ${isActive? 'bg-[F2F3FF] border-r-4 border-blue-500':''}`}
-                to={"/doctor-profile"}>
-                    <img src={assets.people_icon} alt="" />
-                    <span className="hidden md:block">Profil </span>
-                </NavLink>
-            </ul>
-        }
+export default function Sidebar() {
+  const { aToken } = useContext(AdminContext);
+  const { dToken } = useContext(DoctorContext);
 
-        </div>
-    )
+  const adminLinks = [
+    { to: "/admin-dashboard", icon: assets.home_icon, label: "Panel" },
+    { to: "/all-appointments", icon: assets.appointment_icon, label: "Randevular" },
+    { to: "/add-doctor", icon: assets.add_icon, label: "Doktor Ekle" },
+    { to: "/doctor-list", icon: assets.people_icon, label: "Doktorlar" },
+  ];
+
+  const doctorLinks = [
+    { to: "/doctor-dashboard", icon: assets.home_icon, label: "Panel" },
+    { to: "/doctor-appointments", icon: assets.appointment_icon, label: "Randevular" },
+    { to: "/doctor-chat", icon: assets.chats_icon || assets.appointment_icon, label: "Mesajlar" },
+    { to: "/doctor-notifications", icon: assets.list_icon, label: "Bildirimler" },
+    { to: "/doctor-profile", icon: assets.people_icon, label: "Profil" },
+  ];
+
+  const links = aToken ? adminLinks : dToken ? doctorLinks : [];
+
+  return (
+    <aside className="sticky top-20 min-h-[calc(100vh-5rem)] border-r border-slate-200 bg-white px-2 py-5 md:w-72">
+      <nav className="space-y-2">
+        {links.map((link) => (
+          <NavLink
+            key={link.to}
+            to={link.to}
+            className={({ isActive }) =>
+              `flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold md:px-5 ${
+                isActive
+                  ? "bg-slate-950 text-white shadow-lg shadow-slate-900/10"
+                  : "text-slate-600 hover:bg-slate-50 hover:text-slate-950"
+              }`
+            }
+          >
+            <img src={link.icon} alt="" className="h-5 w-5" />
+            <span className="hidden md:block">{link.label}</span>
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
+  );
 }

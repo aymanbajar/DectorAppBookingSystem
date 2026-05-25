@@ -8,10 +8,13 @@ const appointmentSchema = new mongoose.Schema({
     userData:{type:Object, required:true},
     docData:{type:Object, required:true},
     amount:{type:Number, required:true},
+    visitReason:{type:String, default:""},
     date:{type:Number, required:true},
+    status:{type:String, enum:["pending","confirmed","rejected","cancelled","completed"], default:"pending"},
     cancelled :{type:Boolean,default:false},
     payment:{type:Boolean,default:false},
-    isCompleted:{type:Boolean,default:false}
+    isCompleted:{type:Boolean,default:false},
+    reviewed:{type:Boolean,default:false}
 })
 const appointmentModel = mongoose.model('appointments',appointmentSchema)
 export default appointmentModel;

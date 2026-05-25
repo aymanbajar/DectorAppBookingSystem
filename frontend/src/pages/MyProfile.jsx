@@ -108,11 +108,7 @@ export default function MyProfile() {
         </div>
 
         <div className="mt-8 flex justify-end gap-3">
-          {isEdit ? (
-            <button onClick={updateUserProfileData} className="btn-primary">Bilgileri Kaydet</button>
-          ) : (
-            <button onClick={() => setIsEdit(true)} className="btn-secondary">Düzenle</button>
-          )}
+          {isEdit ? <button onClick={updateUserProfileData} className="btn-primary">Bilgileri Kaydet</button> : <button onClick={() => setIsEdit(true)} className="btn-secondary">Düzenle</button>}
         </div>
       </div>
     </section>

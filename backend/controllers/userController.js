@@ -6,6 +6,7 @@ import appointmentModel from '../models/appointmentModel.js';
 import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 import razorpay from 'razorpay';
+import { createNotification } from './notificationController.js';
 // api to  register user
 export const registerUser = async (req, res) => {
     try{
@@ -161,7 +162,7 @@ export const updateProfile = async (req,res) => {
 //api to book appointment
 export const bookAppointment  =async(req,res) => {
     try{
-        const {docId, slotDate, slotTime} = req.body;
+        const {docId, slotDate, slotTime, visitReason = ""} = req.body;
         const userId = req.userId;
         
         const docData = await doctorModel.findById(docId).select('-password')
@@ -195,14 +196,30 @@ export const bookAppointment  =async(req,res) => {
             amount:docData.fees,
             sloteDate: slotDate,
             sloteTime: slotTime,
+            visitReason,
             date:Date.now(),
+            status:"pending",
         }
         const newAppointment = new appointmentModel(appointmentData);
         await newAppointment.save();
         await doctorModel.findByIdAndUpdate(docId,{slots_booked})
+        await createNotification({
+            recipientType:"user",
+            recipientId:userId,
+            title:"Randevu isteği alındı",
+            message:`${docData.name} için randevu isteğiniz doktor onayı bekliyor.`,
+            link:"/my-appointments"
+        });
+        await createNotification({
+            recipientType:"doctor",
+            recipientId:docId,
+            title:"Yeni randevu isteği",
+            message:`${userData.name} sizden randevu talep etti.`,
+            link:"/doctor-appointments"
+        });
         res.json({
             success:true,
-            message:"Randevu başarıyla alındı"
+            message:"Randevu isteği alındı, doktor onayı bekleniyor"
         });
 
     }catch(error){
@@ -263,6 +280,13 @@ export const cancelAppointment = async(req,res) => {
         let slots_booked = docData.slots_booked;
         slots_booked[sloteDate] = slots_booked[sloteDate].filter(slot => slot !== sloteTime);
         await doctorModel.findByIdAndUpdate(docId,{slots_booked});
+        await createNotification({
+            recipientType:"doctor",
+            recipientId:docId,
+            title:"Randevu iptal edildi",
+            message:`${appointmentData.userData.name} randevusunu iptal etti.`,
+            link:"/doctor-appointments"
+        });
         res.json({
             success:true,
             message:"Randevu iptal edildi"
@@ -276,6 +300,20 @@ export const cancelAppointment = async(req,res) => {
         })
     }
 }   
+
+export const updateMedicalRecord = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { allergies = "", medications = "", chronicDiseases = "", bloodType = "", notes = "" } = req.body;
+        await userModel.findByIdAndUpdate(userId, {
+            medicalRecord: { allergies, medications, chronicDiseases, bloodType, notes }
+        });
+        res.json({ success:true, message:"Sağlık bilgileri güncellendi" });
+    } catch (error) {
+        console.log(error);
+        res.json({ success:false, message:error.message });
+    }
+}
 
 const razorpayInstance = new razorpay({
     key_id: process.env.RAZORPAY_KEY_ID,
@@ -321,7 +359,8 @@ export const verifyRazorpay = async(req,res) => {
         const {razorpay_order_id} = req.body;
         const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
         if(orderInfo.status === 'paid'){
-            await appointmentModel.findByIdAndUpdate(orderInfo.receipt,{paid:true});
+            const appointmentId = orderInfo.receipt.replace("receipt_order_", "");
+            await appointmentModel.findByIdAndUpdate(appointmentId,{payment:true});
              res.json({
                 success:true,
                 message:"Ödeme başarılı"

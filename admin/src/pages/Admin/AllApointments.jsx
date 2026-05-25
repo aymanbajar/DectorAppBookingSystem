@@ -1,64 +1,39 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AdminContext } from "../../context/AdminContext";
-import {useEffect} from 'react';
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
 
-export default function AllApointments(){
-    const{aToken, appointments,getAllAppointments,cancelAppointment}= useContext(AdminContext);
-    const { calculateAge ,slotDateFormat} = useContext(AppContext);
+export default function AllApointments() {
+  const { aToken, appointments, getAllAppointments, cancelAppointment } = useContext(AdminContext);
+  const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
 
-    useEffect(()=>{
-        if(aToken){
-            getAllAppointments();
-        }
-    },[aToken]);
-    return(
-        <div className='w-full max-w-6xl m-5 font-serif'>
-            <p className='mb-3 text-2xl font-medium'>Tüm Randevular</p>
-            <div className='bg-white border rounded text-sm max-h-[80vh] min-h-[60vh] overflow-y-scroll'>
-              <div className="hidden sm:grid grid-cols-[0.5fr_3fr_1fr_3fr_3fr_1fr_1fr] grid-flow-col py-3 px-6 border-b">
-                <p className='font-bold'>#</p>
-                <p className='font-bold'>Hasta </p>
-                <p className='font-bold'>Yaş</p>
-                <p className='font-bold'>Tarih & zaman</p>
-                <p className='font-bold'>Doktor</p>
-                <p className='font-bold'>Ücret</p>
-                <p className='font-bold'>İşlemler</p>
+  useEffect(() => {
+    if (aToken) getAllAppointments();
+  }, [aToken]);
 
-               
-              </div>
-               {appointments.map((item,index) =>(
-                    <div 
-                    className='flex flex-wrap justify-between maxsm:gap-2 sm:grid sm:grid-cols-[0.5fr_3fr_1fr_3fr_3fr_1fr_1fr] items-center text-gray-500 py-3 px-6 border-b hover:bg-gray-50'
-                    key ={index}>
-                    <p className='max-sm:hidden'>{index+1}</p>   
-                        <div className='flex items-center gap-2'>
-                            <img className="w-8 rounded-full" src={item.userData.image} alt="" />
-                            <p>{item.userData.name}</p>
-                        </div>
-                        <p className="max-sm:hidden">{calculateAge(item.userData.dob)}</p>
-                        <p>{slotDateFormat(item.sloteDate)} | {item.sloteTime}</p>
-                        <div className='flex items-center gap-2'>
-                            <img className="w-8 rounded-full" src={item.docData.image} alt="" />
-                            <p>{item.docData.name}</p>
-                        </div>
-                        <p>₺{item.amount}</p>
-                        <div className="flex gap-2">
-                            {item.cancelled ? (
-                                <p className="text-red-500 text-xs font-medium">İptal Edildi</p>
-                            ) :item.isCompleted ? (
-                                <p className="text-green-500 text-xs font-medium">Tamamlandı</p>
-                            ) : (
-                                <img onClick={() => cancelAppointment(item._id)} className="w-10 cursor-pointer" src={assets.cancel_icon} alt="" />
-                            )}
-                        </div>
-                    </div>
-                ))}
-            </div>
-
-
-
+  return (
+    <section className="admin-page">
+      <h1 className="admin-title">Tüm Randevular</h1>
+      <div className="admin-card max-h-[78vh] min-h-[55vh] overflow-auto text-sm">
+        <div className="hidden grid-cols-[0.4fr_2fr_0.8fr_2fr_2fr_0.8fr_1fr] border-b border-slate-200 px-6 py-4 font-bold text-slate-700 sm:grid">
+          <p>#</p><p>Hasta</p><p>Yaş</p><p>Tarih & Saat</p><p>Doktor</p><p>Ücret</p><p>İşlemler</p>
         </div>
-    )
+        <div className="divide-y divide-slate-100">
+          {appointments.map((item, index) => (
+            <div className="grid gap-3 px-6 py-4 text-slate-600 hover:bg-slate-50 sm:grid-cols-[0.4fr_2fr_0.8fr_2fr_2fr_0.8fr_1fr] sm:items-center" key={item._id}>
+              <p className="hidden sm:block">{index + 1}</p>
+              <div className="flex items-center gap-2"><img className="h-9 w-9 rounded-full object-cover" src={item.userData.image} alt="" /><p className="font-semibold text-slate-800">{item.userData.name}</p></div>
+              <p className="hidden sm:block">{calculateAge(item.userData.dob)}</p>
+              <p>{slotDateFormat(item.sloteDate)} | {item.sloteTime}</p>
+              <div className="flex items-center gap-2"><img className="h-9 w-9 rounded-full object-cover" src={item.docData.image} alt="" /><p className="font-semibold text-slate-800">{item.docData.name}</p></div>
+              <p>{currency}{item.amount}</p>
+              <div>
+                {item.cancelled ? <span className="status-pill bg-red-50 text-red-600">İptal Edildi</span> : item.isCompleted ? <span className="status-pill bg-emerald-50 text-emerald-700">Tamamlandı</span> : <button onClick={() => cancelAppointment(item._id)} className="rounded-full bg-red-50 p-2 hover:bg-red-100"><img className="w-7" src={assets.cancel_icon} alt="İptal et" /></button>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }
