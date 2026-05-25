@@ -23,20 +23,33 @@ export default function Appointments() {
 
     const allSlots = [];
     const today = new Date();
+    const fullDays = ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"];
+    const hasSchedule = docInfo.workSchedule?.some((item) => item.enabled);
 
     for (let i = 0; i < 7; i++) {
       const currentDate = new Date(today);
       currentDate.setDate(today.getDate() + i);
+      const isoDate = currentDate.toISOString().slice(0, 10);
+      const isBlocked = docInfo.blockedDays?.includes(isoDate);
+      const daySchedule = docInfo.workSchedule?.find((item) => item.day === fullDays[currentDate.getDay()]);
+
+      if (isBlocked || (hasSchedule && !daySchedule?.enabled)) {
+        allSlots.push([]);
+        continue;
+      }
+
+      const [startHour = 10, startMinute = 0] = (daySchedule?.start || "10:00").split(":").map(Number);
+      const [endHour = 21, endMinute = 0] = (daySchedule?.end || "21:00").split(":").map(Number);
 
       const endTime = new Date(today);
       endTime.setDate(today.getDate() + i);
-      endTime.setHours(21, 0, 0, 0);
+      endTime.setHours(endHour, endMinute, 0, 0);
 
       if (today.getDate() === currentDate.getDate()) {
-        currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10);
+        currentDate.setHours(currentDate.getHours() > startHour ? currentDate.getHours() + 1 : startHour);
         currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
       } else {
-        currentDate.setHours(10, 0, 0, 0);
+        currentDate.setHours(startHour, startMinute, 0, 0);
       }
 
       const timeSlots = [];

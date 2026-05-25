@@ -8,10 +8,27 @@ const specialities = [
   "Dermatoloji",
   "Çocuk Doktoru",
   "Nörolog",
-  "Gastroenteroloji",
+  "Kardiyoloji",
 ];
 
 const getExperienceNumber = (value = "") => Number.parseInt(String(value), 10) || 0;
+const normalizeSpeciality = (value = "") =>
+  String(value)
+    .toLocaleLowerCase("tr-TR")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const specialityMatches = (doctorSpeciality, selectedSpeciality) => {
+  if (!selectedSpeciality) return true;
+  const doctorValue = normalizeSpeciality(doctorSpeciality);
+  const selectedValue = normalizeSpeciality(selectedSpeciality);
+  if (doctorValue === selectedValue) return true;
+  if (selectedValue === "norolog") return ["norolog", "noroloji", "neurolog", "neurology"].includes(doctorValue);
+  if (selectedValue === "kardiyoloji") return ["kardiyoloji", "kardiyolog", "cardiology", "cardiologist"].includes(doctorValue);
+  return false;
+};
 
 export default function Doctors() {
   const navigate = useNavigate();
@@ -39,18 +56,18 @@ export default function Doctors() {
   }, [compareDoctors]);
 
   const filteredDoctors = useMemo(() => {
-    const search = query.trim().toLowerCase();
+    const search = query.trim().toLocaleLowerCase("tr-TR");
     const maxPrice = priceMax ? Number(priceMax) : Infinity;
 
     return doctors
-      .filter((doc) => !speciality || doc.speciality === speciality)
+      .filter((doc) => specialityMatches(doc.speciality, speciality))
       .filter((doc) => !availableOnly || doc.available)
       .filter((doc) => Number(doc.fees || 0) <= maxPrice)
       .filter((doc) => {
         if (!search) return true;
         return [doc.name, doc.speciality, doc.degree, doc.address?.line1, doc.address?.line2]
           .filter(Boolean)
-          .some((field) => String(field).toLowerCase().includes(search));
+          .some((field) => String(field).toLocaleLowerCase("tr-TR").includes(search));
       })
       .sort((a, b) => {
         if (sortBy === "fees-low") return Number(a.fees || 0) - Number(b.fees || 0);
@@ -156,8 +173,8 @@ export default function Doctors() {
             {specialities.map((sp) => (
               <button
                 key={sp}
-                onClick={() => navigate(speciality === sp ? "/doctors" : `/doctors/${sp}`)}
-                className={`w-full rounded-xl px-4 py-3 text-left text-sm font-semibold ${speciality === sp ? "bg-cyan-50 text-cyan-800" : "text-slate-600 hover:bg-slate-50"}`}
+                onClick={() => navigate(specialityMatches(speciality, sp) ? "/doctors" : `/doctors/${sp}`)}
+                className={`w-full rounded-xl px-4 py-3 text-left text-sm font-semibold ${specialityMatches(speciality, sp) ? "bg-cyan-50 text-cyan-800" : "text-slate-600 hover:bg-slate-50"}`}
               >
                 {sp}
               </button>

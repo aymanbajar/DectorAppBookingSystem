@@ -50,5 +50,5 @@ export const specialityData = [
   { speciality: "Dermatoloji", image: Dermatologist },
   { speciality: "Çocuk Doktoru", image: Pediatricians },
   { speciality: "Nörolog", image: Neurologist },
-  { speciality: "Gastroenteroloji", image: Gastroenterologist },
+  { speciality: "Kardiyoloji", image: Gastroenterologist },
 ];
