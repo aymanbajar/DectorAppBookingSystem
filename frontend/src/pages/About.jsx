@@ -1,66 +1,53 @@
-import {assets} from '../assets/assets_frontend/assets.js'
-export default function About(){
-    return (
-      <div className='font-serif'>
-        <div className="text-center pt-10 text-2xl text-gray-500">
-          <p>
-            Hakkı<span className="text-gray-700">mızda</span>
-          </p>
-        </div>
-        <div className="flex flex-col my-10 md:flex-row gap-12">
-          <img
-            className="w-full md:max-w-[360px]"
-            src={assets.about_image}
-            alt="about image"
-          />
-          <div className="flex flex-col  justify-center gap-6 md:w-2/4 text-xl  text-gray-600">
+import { assets } from "../assets/assets_frontend/assets.js";
+
+const reasons = [
+  ["Verimlilik", "Yoğun günlerinize uyacak hızlı ve sorunsuz randevu planlaması."],
+  ["Kolaylık", "Bölgenizdeki güvenilir sağlık profesyonellerine tek yerden erişim."],
+  ["Kişiselleştirme", "Sağlık takibinizi kolaylaştıran size özel bilgiler ve hatırlatmalar."],
+];
+
+export default function About() {
+  return (
+    <section className="py-12">
+      <div className="mb-10 text-center">
+        <p className="section-eyebrow">Hakkımızda</p>
+        <h1 className="section-title mt-2">Sağlık randevularını daha erişilebilir yapıyoruz</h1>
+      </div>
+
+      <div className="grid items-center gap-10 lg:grid-cols-[420px_1fr]">
+        <img className="w-full rounded-[2rem] object-cover shadow-xl shadow-slate-900/10" src={assets.about_image} alt="Hakkımızda" />
+        <div className="surface-card p-6 sm:p-8">
+          <div className="space-y-5 text-base leading-8 text-slate-600">
             <p>
-              Hoş geldiniz. Sağlık ihtiyaçlarınızı kolay ve verimli bir şekilde
-              yönetmede güvenilir ortağınız. Doktor randevularını planlama ve
-              sağlık kayıtlarını yönetme konusunda bireylerin karşılaştığı
-              zorlukları anlıyoruz. 
+              Sağlık ihtiyaçlarınızı kolay ve verimli şekilde yönetmeniz için
+              tasarlanmış güvenilir bir randevu platformuyuz.
             </p>
             <p>
-              Sağlık hizmetlerini daha kolay ve ulaşılabilir hale getirmek için
-              sürekli kendini geliştiren bir platformdur. Amacımız, randevu
-              almayı ve sağlık takibini herkes için pratik, güvenilir ve hızlı
-              kılmaktır.
+              Amacımız, doktor bulmayı, randevu almayı ve sağlık takibini herkes
+              için pratik, hızlı ve güvenilir hale getirmek.
             </p>
-            <b className="text-gray-800">Vizyonumuz</b>
-            <p>
-              Vizyonumuz, her kullanıcıya kesintisiz ve erişilebilir bir sağlık
-              deneyimi sunmaktır. Hastalar ile sağlık hizmeti sağlayıcıları
-              arasındaki bağlantıyı güçlendirerek, ihtiyaç duyulan bakıma hızlı
-              ve kolay bir şekilde ulaşmayı hedefliyoruz.
-            </p>
-          </div>
-        </div>
-        <div className="text-xl my-4">
-          <p>
-            Neden
-            <span className="text-gray-700"> bizi tercih etmelisiniz?</span>
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row mb-20 ">
-          <div className="border px-8 md:px-8 py-8 sm:py-16 flex flex-col gap-5  text-[20px] hover:bg-blue-700 hover:text-white transition-all duration-300 text-black cursor-pointer">
-            <b>Verimlilik</b>
-            <p>
-              Yoğun yaşam tarzınıza uyacak şekilde düzenlenmiş, hızlı ve
-              sorunsuz randevu planlaması.
-            </p>
-          </div>
-          <div className="border px-8 md:px-8 py-8 sm:py-16 flex flex-col gap-5  text-[20px] hover:bg-blue-700 hover:text-white transition-all duration-300 text-black cursor-pointer">
-            <b>Kolaylık</b>
-            <p>Bölgenizdeki güvenilir sağlık profesyonellerine kolay erişim.</p>
-          </div>
-          <div className="border px-8 md:px-8 py-8 sm:py-16 flex flex-col gap-5  text-[20px] hover:bg-blue-700 hover:text-white transition-all duration-300 text-black cursor-pointer">
-            <b>Kişiselleştirme</b>
-            <p>
-              Sağlığınızı takip etmenize yardımcı olacak, size özel öneriler ve
-              hatırlatmalar.
-            </p>
+            <div>
+              <h2 className="text-xl font-bold text-slate-950">Vizyonumuz</h2>
+              <p className="mt-2">
+                Hastalar ile sağlık hizmeti sağlayıcıları arasındaki bağlantıyı
+                güçlendirerek ihtiyaç duyulan bakıma kolayca ulaşılmasını sağlamak.
+              </p>
+            </div>
           </div>
         </div>
       </div>
-    );
+
+      <div className="mt-14">
+        <h2 className="text-2xl font-bold text-slate-950">Neden bizi tercih etmelisiniz?</h2>
+        <div className="mt-6 grid gap-5 md:grid-cols-3">
+          {reasons.map(([title, copy]) => (
+            <div key={title} className="surface-card p-6 hover:-translate-y-1 hover:border-cyan-200 hover:shadow-xl hover:shadow-cyan-900/10">
+              <h3 className="text-lg font-bold text-slate-950">{title}</h3>
+              <p className="mt-3 leading-7 text-slate-600">{copy}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
 }

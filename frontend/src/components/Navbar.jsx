@@ -2,157 +2,117 @@ import { NavLink, useNavigate } from "react-router-dom";
 import logoImage from "../assets/logo.png";
 import profileLogo from "../assets/profileLogo.png";
 import { assets } from "../assets/assets_frontend/assets.js";
-import { useState } from "react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AppContext } from "../context/AppContext.jsx";
+
+const links = [
+  { to: "/", label: "Ana Sayfa" },
+  { to: "/doctors", label: "Doktorlar" },
+  { to: "/about", label: "Hakkımızda" },
+  { to: "/contact", label: "İletişim" },
+];
+
 export default function Navbar() {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const { token, setToken ,userData} = useContext(AppContext);
+  const { token, setToken, userData } = useContext(AppContext);
+
   const logout = () => {
     setToken(false);
     localStorage.removeItem("token");
     navigate("/");
   };
-  return (
-    <div className="flex justify-between items-center bg-white sticky top-0 z-50 border-b border-gray-400 text-xl px-8 py-2 mb-5 font-serif">
-      {/* logo */}
-      <div
-        className="flex items-center  cursor-pointer"
-        onClick={() => navigate("/")}
-      >
-        <img
-          onClick={() => navigate("/")}
-          src={logoImage}
-          alt="logo"
-          className="w-20 h-20"
-        />
-      </div>
 
-      {/* Links */}
-      <ul className="hidden md:flex items-center gap-8  text-gray-700">
-        <NavLink
-          to="/"
-          className={({ isActive }) =>
-            `transition-colors duration-300 ${
-              isActive ? "text-blue-600 border-b-2 border-blue-600" : ""
-            } hover:text-blue-600`
-          }
+  const navClass = ({ isActive }) =>
+    `rounded-full px-4 py-2 text-sm font-semibold ${
+      isActive
+        ? "bg-slate-950 text-white shadow-sm"
+        : "text-slate-600 hover:bg-slate-100 hover:text-slate-950"
+    }`;
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <div className="page-shell flex h-20 items-center justify-between">
+        <button
+          type="button"
+          className="flex items-center gap-3"
+          onClick={() => navigate("/")}
+          aria-label="Ana sayfaya git"
         >
-          Ana Sayfa
-        </NavLink>
-        <NavLink
-          to="/doctors"
-          className={({ isActive }) =>
-            `transition-colors duration-300 ${
-              isActive ? "text-blue-600 border-b-2 border-blue-600" : ""
-            } hover:text-blue-600`
-          }
-        >
-          Tüm Doktorlar
-        </NavLink>
-        <NavLink
-          to="/about"
-          className={({ isActive }) =>
-            `transition-colors duration-300 ${
-              isActive ? "text-blue-600 border-b-2 border-blue-600" : ""
-            } hover:text-blue-600`
-          }
-        >
-          Hakkında
-        </NavLink>
-        <NavLink
-          to="/contact"
-          className={({ isActive }) =>
-            `transition-colors duration-300 ${
-              isActive ? "text-blue-600 border-b-2 border-blue-600" : ""
-            } hover:text-blue-600`
-          }
-        >
-          İletişim
-        </NavLink>
-      </ul>
-      <div className="flex items-center gap-3">
-        {token && userData ? (
-          <div className=" flex items-center gap-2 cursor-pointer group  relative">
-            <img
-              className="w-12 rounded-full"
-              src={userData.image || profileLogo}
-              alt="profile logo"
-            />
-            <img
-              className="w-4"
-              src={assets.dropdown_icon}
-              alt="dropdown icon"
-            />
-            <div className="absolute top-0 right-0 pt-14 text-base group-hover:block hidden  text-gray-600 z-2 ">
-              <div className="min-w-48 bg-stone-100 rounded flex flex-col gap-4 p-4 ">
-                <p
-                  className="hover:text-black cursor-pointer transition"
-                  onClick={() => navigate("/my-profile")}
-                >
-                  profilim
-                </p>
-                <p
-                  className="hover:text-black cursor-pointer transition"
-                  onClick={() => navigate("/my-appointments")}
-                >
-                  randevularım
-                </p>
-                <p
-                  className="hover:text-black cursor-pointer transition"
-                  onClick={() => logout()}
-                >
-                  çıkış yap
-                </p>
+          <img src={logoImage} alt="Dector logo" className="h-14 w-14 object-contain" />
+          <span className="hidden text-lg font-bold text-slate-950 sm:block">
+            Dector
+          </span>
+        </button>
+
+        <nav className="hidden items-center gap-1 rounded-full border border-slate-200 bg-white p-1 shadow-sm md:flex">
+          {links.map((link) => (
+            <NavLink key={link.to} to={link.to} className={navClass}>
+              {link.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-3">
+          {token && userData ? (
+            <div className="group relative flex cursor-pointer items-center gap-2">
+              <img
+                className="h-11 w-11 rounded-full border border-slate-200 object-cover"
+                src={userData.image || profileLogo}
+                alt="Profil"
+              />
+              <img className="w-3 opacity-60" src={assets.dropdown_icon} alt="" />
+              <div className="absolute right-0 top-10 hidden pt-4 group-hover:block">
+                <div className="min-w-52 rounded-2xl border border-slate-200 bg-white p-2 text-sm text-slate-600 shadow-xl shadow-slate-900/10">
+                  <button onClick={() => navigate("/my-profile")} className="w-full rounded-xl px-4 py-3 text-left hover:bg-slate-50 hover:text-slate-950">
+                    Profilim
+                  </button>
+                  <button onClick={() => navigate("/my-appointments")} className="w-full rounded-xl px-4 py-3 text-left hover:bg-slate-50 hover:text-slate-950">
+                    Randevularım
+                  </button>
+                  <button onClick={logout} className="w-full rounded-xl px-4 py-3 text-left text-red-600 hover:bg-red-50">
+                    Çıkış yap
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        ) : (
+          ) : (
+            <button onClick={() => navigate("/login")} className="btn-primary hidden md:inline-flex">
+              Hesap Oluştur
+            </button>
+          )}
+
           <button
-            onClick={() => navigate("/login")}
-            className="bg-blue-800 hidden md:block text-white px-8 py-3 rounded-full font-light"
+            type="button"
+            onClick={() => setShowMenu(true)}
+            className="rounded-full border border-slate-200 p-3 md:hidden"
+            aria-label="Menüyü aç"
           >
-            Hesap Oluştur
+            <img className="w-5" src={assets.menu_icon} alt="" />
           </button>
-        )}
-        <img
-          onClick={() => setShowMenu(true)}
-          className="w-6  md:hidden "
-          src={assets.menu_icon}
-          alt="Menu  icon "
-        />
-        {/* Mobil menu  */}
-        <div
-          className={`${
-            showMenu ? "fixed w-full" : "w-0 h-0 "
-          } md:hidden right-0 bottom-0 top-0 z-20 overflow-hidden  bg-white transition-all duration-300`}
-        >
-          <div className="flex items-center justify-between px-5 py-6">
-            <img className="w-20" src={logoImage} alt="logo  image" />
-            <img
-              className="w-7"
-              onClick={() => setShowMenu(false)}
-              src={assets.cross_icon}
-              alt="cross icon "
-            />
-          </div>
-          <ul className="flex flex-col  items-center gap-2 mt-5 px-5 text-3xl ">
-            <NavLink onClick={() => setShowMenu(false)} to="/">
-              <p className="px-4 py-2 rounded inline-block">Ana Sayfa</p>
-            </NavLink>
-            <NavLink onClick={() => setShowMenu(false)} to="/doctors">
-              <p className="px-4 py-2 rounded inline-block">Tüm Doktorlar</p>
-            </NavLink>
-            <NavLink onClick={() => setShowMenu(false)} to="/about">
-              <p className="px-4 py-2 rounded inline-block">Hakkında</p>
-            </NavLink>
-            <NavLink onClick={() => setShowMenu(false)} to="/contact">
-              <p className="px-4 py-2 rounded inline-block">İletişim</p>
-            </NavLink>
-          </ul>
         </div>
       </div>
-    </div>
+
+      <div className={`${showMenu ? "fixed inset-0" : "pointer-events-none fixed inset-0 translate-x-full"} z-50 bg-white transition-transform duration-300 md:hidden`}>
+        <div className="flex items-center justify-between border-b border-slate-200 px-5 py-5">
+          <img className="h-14 w-14 object-contain" src={logoImage} alt="Dector logo" />
+          <button onClick={() => setShowMenu(false)} className="rounded-full border border-slate-200 p-3" aria-label="Menüyü kapat">
+            <img className="w-5" src={assets.cross_icon} alt="" />
+          </button>
+        </div>
+        <nav className="flex flex-col gap-3 p-5 text-xl font-semibold">
+          {links.map((link) => (
+            <NavLink key={link.to} onClick={() => setShowMenu(false)} to={link.to}>
+              <p className="rounded-2xl px-5 py-4">{link.label}</p>
+            </NavLink>
+          ))}
+          {!token && (
+            <button onClick={() => { setShowMenu(false); navigate("/login"); }} className="btn-primary mt-4">
+              Hesap Oluştur
+            </button>
+          )}
+        </nav>
+      </div>
+    </header>
   );
 }

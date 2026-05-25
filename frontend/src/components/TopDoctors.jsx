@@ -1,53 +1,62 @@
-import { useNavigate } from "react-router-dom";
 import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
-export default function TopDoctors(){
-    const navigate =  useNavigate()
-    const {doctors} = useContext(AppContext)
-    return (
-      <div className="flex flex-col items-center gap-4 my-16 text-gray-900 md:mx-10 font-serif">
-        <h1 className="text-3xl font-bold">
-          Randevu Alınacak En İyi Doktorlar
-        </h1>
-        <p className="text-xl font-medium text-center sm:w-1/3">
-          Güvenilir doktorlardan oluşan geniş listemizi inceleyin.
+
+export default function TopDoctors() {
+  const navigate = useNavigate();
+  const { doctors } = useContext(AppContext);
+
+  return (
+    <section className="my-20">
+      <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="section-eyebrow">Popüler doktorlar</p>
+          <h2 className="section-title mt-2">Randevu alınacak en iyi doktorlar</h2>
+        </div>
+        <p className="section-copy md:text-right">
+          Geniş uzman ağımızdan size en uygun doktoru seçin.
         </p>
-        <div
-          className="w-full grid gap-4 pt-5 gap-y-5 px-3 sm:px-0"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(210px, 1fr))",
-          }}
-        >
-          {doctors.slice(0, 10).map((item, index) => (
-            <div
-              onClick={() => {
-                navigate(`/Appointments/${item._id}`);
-                scrollTo(0, 0);
-              }}
-              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:translate-y-[-10px] transition-all duration-500"
-              key={index}
-            >
-              <img className="bg-gray-50" src={item.image} alt=" item image" />
-              <div className="p-4">
-                <div className={`flex items-center  gap-2 text-xl text-center ${item.available ? 'text-green-500' : 'text-gray-500'}`}>
-                  <p className={`w-2 h-2 ${item.available ? 'bg-green-500' : 'bg-gray-500'} rounded-full`}></p>
-                  <p>{item.available ? 'Müsait' : 'Müsait Değil'}</p>
-                </div>
-                <p className="text-gray-900 text-lg ">{item.name}</p>
-                <p className="text-gray-900 text-lg ">{item.speciality}</p>
+      </div>
+
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5">
+        {doctors.slice(0, 10).map((item) => (
+          <button
+            type="button"
+            onClick={() => {
+              navigate(`/Appointments/${item._id}`);
+              scrollTo(0, 0);
+            }}
+            className="doctor-card text-left"
+            key={item._id}
+          >
+            <div className="bg-gradient-to-b from-cyan-50 to-slate-50">
+              <img className="aspect-[4/3] w-full object-contain p-2" src={item.image} alt={item.name} />
+            </div>
+            <div className="space-y-2 p-4">
+              <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${item.available ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                <span className={`h-2 w-2 rounded-full ${item.available ? "bg-emerald-500" : "bg-slate-400"}`} />
+                {item.available ? "Müsait" : "Müsait Değil"}
+              </div>
+              <div>
+                <p className="font-bold text-slate-950">{item.name}</p>
+                <p className="text-sm text-slate-500">{item.speciality}</p>
               </div>
             </div>
-          ))}
-        </div>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-10 flex justify-center">
         <button
           onClick={() => {
-            navigate("/docctors");
+            navigate("/doctors");
             scrollTo(0, 0);
           }}
-          className="bg-blue-50 text-gray-600 px-12 py-3 rounded-full mt-10"
+          className="btn-secondary"
         >
           Tüm Doktorları Görüntüle
         </button>
       </div>
-    );
+    </section>
+  );
 }

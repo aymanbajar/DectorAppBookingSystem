@@ -1,24 +1,21 @@
+import { Link } from "react-router-dom";
+
 export default function Footer() {
   return (
-    <footer className="bg-gray-100 font-serif text-black py-6 mt-10 ">
-      <div className="container mx-auto px-4 text-center">
-        <div className="flex  justify-center items-center gap-4 m-4">
-          <a href="/" className="hover:text-blue-400">
-            Ana Sayfa
-          </a>
-          <a href="/doctors" className="hover:text-blue-400">
-            Tüm Doktorlar
-          </a>
-          <a href="/about" className="hover:text-blue-400">
-            Hakkımızda
-          </a>
-          <a href="/contact" className="hover:text-blue-400">
-            İletişim
-          </a>
+    <footer className="mt-20 border-t border-slate-200 bg-white">
+      <div className="page-shell flex flex-col gap-6 py-8 text-center sm:flex-row sm:items-center sm:justify-between sm:text-left">
+        <div>
+          <p className="text-lg font-bold text-slate-950">Dector</p>
+          <p className="mt-1 text-sm text-slate-500">
+            &copy; {new Date().getFullYear()} Tüm hakları saklıdır.
+          </p>
         </div>
-        <p className="text-sm">
-          &copy; {new Date().getFullYear()} Tüm hakları saklıdır
-        </p>
+        <nav className="flex flex-wrap justify-center gap-4 text-sm font-semibold text-slate-600">
+          <Link to="/" className="hover:text-cyan-700">Ana Sayfa</Link>
+          <Link to="/doctors" className="hover:text-cyan-700">Doktorlar</Link>
+          <Link to="/about" className="hover:text-cyan-700">Hakkımızda</Link>
+          <Link to="/contact" className="hover:text-cyan-700">İletişim</Link>
+        </nav>
       </div>
     </footer>
   );

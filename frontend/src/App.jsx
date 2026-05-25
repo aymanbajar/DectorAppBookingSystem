@@ -22,20 +22,22 @@ function App() {
 
 
   return (
-    <div className="mx-4 sm:mx-[10%]">
+    <div className="min-h-screen">
       <ToastContainer />
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/doctors" element={<Doctors />} />
-        <Route path="/doctors:speciality" element={<Doctors />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/my-profile" element={<MyProfile />} />
-        <Route path="/my-appointments" element={<MyAppointments />} />
-        <Route path="/Appointments/:docId" element={<Appointments />} />
-      </Routes>
+      <main className="page-shell">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/doctors" element={<Doctors />} />
+          <Route path="/doctors/:speciality" element={<Doctors />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/my-profile" element={<MyProfile />} />
+          <Route path="/my-appointments" element={<MyAppointments />} />
+          <Route path="/Appointments/:docId" element={<Appointments />} />
+        </Routes>
+      </main>
       <Footer />
     </div>
   );

@@ -1,97 +1,87 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
 import { assets } from "../assets/assets_frontend/assets";
 import RelatedDoctors from "../components/RelatedDoctors";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-import axios from 'axios'
 
 export default function Appointments() {
   const navigate = useNavigate();
   const { docId } = useParams();
-  const { doctors, currencySymbol, backendUrl, token, getDoctorsData } =
-    useContext(AppContext);
-  const daysOfWeek = ["Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Pzr"];
+  const { doctors, currencySymbol, backendUrl, token, getDoctorsData } = useContext(AppContext);
+  const daysOfWeek = ["Pzr", "Pzt", "Sal", "Çar", "Per", "Cum", "Cmt"];
   const [docInfo, setDocInfo] = useState(null);
   const [docSlots, setDocSlots] = useState([]);
   const [slotIndex, setSlotIndex] = useState(0);
   const [slotTime, setSlotTime] = useState("");
-  const getAvailableSlots = async () => {
-    let allSlots = []; // نخزن جميع الأيام هنا
-    let today = new Date();
+
+  const getAvailableSlots = () => {
+    if (!docInfo) return;
+
+    const allSlots = [];
+    const today = new Date();
 
     for (let i = 0; i < 7; i++) {
-      let currentDate = new Date(today);
+      const currentDate = new Date(today);
       currentDate.setDate(today.getDate() + i);
 
-      let endTime = new Date(today);
-      endTime.setDate(today.getDate() + i); // ✅ هنا كان عندك خطأ: استعملت getDay()
+      const endTime = new Date(today);
+      endTime.setDate(today.getDate() + i);
       endTime.setHours(21, 0, 0, 0);
 
       if (today.getDate() === currentDate.getDate()) {
-        currentDate.setHours(
-          currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10
-        );
+        currentDate.setHours(currentDate.getHours() > 10 ? currentDate.getHours() + 1 : 10);
         currentDate.setMinutes(currentDate.getMinutes() > 30 ? 30 : 0);
       } else {
-        currentDate.setHours(10);
-        currentDate.setMinutes(0);
+        currentDate.setHours(10, 0, 0, 0);
       }
 
-      let timeSlots = [];
+      const timeSlots = [];
       while (currentDate < endTime) {
-        let formattedTime = currentDate.toLocaleTimeString([], {
+        const formattedTime = currentDate.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
         });
-        let day = currentDate.getDate();
-        let month = currentDate.getMonth() + 1;
-        let year = currentDate.getFullYear();
-        const slotDate = day + "-" + month + "-" + year;
-        const slotTime = formattedTime;
-        
-        // Check if slot is already booked
-        const isSlotBooked = docInfo.slots_booked?.[slotDate]?.includes(slotTime);
-        
-        if(!isSlotBooked){
-        timeSlots.push({
-          datetime: new Date(currentDate),
-          time: formattedTime,
-        });
+        const slotDate = `${currentDate.getDate()}-${currentDate.getMonth() + 1}-${currentDate.getFullYear()}`;
+        const isSlotBooked = docInfo.slots_booked?.[slotDate]?.includes(formattedTime);
+
+        if (!isSlotBooked) {
+          timeSlots.push({ datetime: new Date(currentDate), time: formattedTime });
         }
         currentDate.setMinutes(currentDate.getMinutes() + 30);
       }
-
       allSlots.push(timeSlots);
     }
 
-    setDocSlots(allSlots); // ✅ تحديث مرة وحدة فقط
+    setDocSlots(allSlots);
   };
+
   const bookAppointment = async () => {
     if (!token) {
       toast.warning("Lütfen randevu almak için giriş yapın");
       return navigate("/login");
     }
+
+    if (!slotTime || !docSlots[slotIndex]?.[0]) {
+      toast.warning("Lütfen uygun bir saat seçin");
+      return;
+    }
+
     try {
       const date = docSlots[slotIndex][0].datetime;
-      let day = date.getDate();
-      let month = date.getMonth() + 1;
-      let year = date.getFullYear();
-      const slotDate = day + "-" + month + "-" + year;
-      const {data} = await axios.post(`${backendUrl}/api/user/book-appointment`,{
-        docId,
-        slotDate,
-        slotTime},{
-        headers:{
-          Authorization:`Bearer ${token}`
-      }}
-      )
-      if(data.success){
+      const slotDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/book-appointment`,
+        { docId, slotDate, slotTime },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (data.success) {
         toast.success("Randevu başarıyla alındı");
         getDoctorsData();
-        navigate('/my-appointments');
-      }else{
+        navigate("/my-appointments");
+      } else {
         toast.error(data.message);
       }
     } catch (error) {
@@ -101,144 +91,90 @@ export default function Appointments() {
   };
 
   useEffect(() => {
-    const fetchDocInfo = () => {
-      const foundDoc = doctors.find((doc) => doc._id === docId);
-      setDocInfo(foundDoc || null);
-    };
-    fetchDocInfo();
+    setDocInfo(doctors.find((doc) => doc._id === docId) || null);
   }, [doctors, docId]);
 
   useEffect(() => {
     getAvailableSlots();
   }, [docInfo]);
-  useEffect(() => {
-    console.log(docSlots);
-  }, [docSlots]);
 
   if (!docInfo) {
-    return <p className="text-center mt-10 text-xl">Loading doctor info...</p>;
+    return <p className="mt-10 text-center text-xl text-slate-600">Doktor bilgileri yükleniyor...</p>;
   }
 
   return (
-    docInfo && (
-      <div className="max-w-6xl mx-auto p-5 sm:p-10 font-serif">
-        {/* Doctor Container */}
-        <div className="bg-white rounded-xl shadow-lg overflow-hidden flex flex-col sm:flex-row gap-8 p-6 sm:p-10">
-          {/* Image */}
+    <div className="mx-auto max-w-6xl py-8">
+      <div className="surface-card overflow-hidden p-5 sm:p-8">
+        <div className="flex flex-col gap-8 sm:flex-row">
           <div className="flex-shrink-0 sm:w-72">
-            <img
-              className="rounded-xl w-full h-full object-cover border border-gray-200"
-              src={docInfo.image}
-              alt={docInfo.name}
-            />
+            <img className="h-full w-full rounded-2xl border border-slate-200 bg-cyan-50 object-cover" src={docInfo.image} alt={docInfo.name} />
           </div>
 
-          {/* Info */}
-          <div className="flex-1 flex flex-col justify-between gap-4">
-            {/* Name & Verified */}
+          <div className="flex flex-1 flex-col justify-between gap-4">
             <div className="flex items-center gap-2">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {docInfo.name}
-              </h1>
-              <img
-                className="w-5 h-5"
-                src={assets.verified_icon}
-                alt="verified icon"
-              />
+              <h1 className="text-3xl font-bold text-slate-950">{docInfo.name}</h1>
+              <img className="h-5 w-5" src={assets.verified_icon} alt="Onaylı" />
             </div>
 
-            {/* Degree & Speciality */}
-            <div className="flex flex-wrap items-center gap-3 text-gray-700 mt-1">
-              <span className="bg-gray-100 px-3 py-1 rounded-full">
-                {docInfo.degree}
-              </span>
-              <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
-                {docInfo.speciality}
-              </span>
-              <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">
-                {docInfo.experience}
-              </span>
+            <div className="mt-1 flex flex-wrap items-center gap-3 text-sm text-slate-700">
+              <span className="rounded-full bg-slate-100 px-3 py-1 font-semibold">{docInfo.degree}</span>
+              <span className="rounded-full bg-cyan-50 px-3 py-1 font-semibold text-cyan-700">{docInfo.speciality}</span>
+              <span className="rounded-full bg-emerald-50 px-3 py-1 font-semibold text-emerald-700">{docInfo.experience}</span>
             </div>
 
-            {/* About */}
             <div className="mt-4">
-              <p className="flex items-center gap-2 text-xl font-semibold text-gray-900">
-                Hakkında{" "}
-                <img
-                  className="w-5 h-5"
-                  src={assets.info_icon}
-                  alt="about icon"
-                />
+              <p className="flex items-center gap-2 text-xl font-semibold text-slate-950">
+                Hakkında
+                <img className="h-5 w-5" src={assets.info_icon} alt="" />
               </p>
-              <p className="text-gray-600 mt-2 leading-relaxed">
-                {docInfo.about}
-              </p>
+              <p className="mt-2 leading-7 text-slate-600">{docInfo.about}</p>
             </div>
 
-            {/* Fees */}
-            <div className="mt-4">
-              <p className="text-gray-700 text-lg">
-                Randevu ücreti:{" "}
-                <span className="font-semibold text-gray-900">
-                  {currencySymbol}
-                  {docInfo.fees}
-                </span>
-              </p>
-            </div>
+            <p className="mt-4 text-lg text-slate-700">
+              Randevu ücreti: <span className="font-bold text-slate-950">{currencySymbol}{docInfo.fees}</span>
+            </p>
           </div>
         </div>
-        {/* Booking slots */}
-        <div className="sm:ml-72 sm:pl-4 mt-4 text-gray-700">
-          <p>Randevu saatleri</p>
-          <div className="flex gap-3 items-center w-full overflow-x-scroll-hidden mt-4">
-            {docSlots.length > 0 &&
-              docSlots.map((item, index) => (
-                <div
-                  onClick={() => setSlotIndex(index)}
-                  key={index}
-                  className={`text-center py-6 min-w-16 rounded-full cursor-pointer  ${
-                    slotIndex === index
-                      ? "bg-blue-700 text-white"
-                      : "border border-gray-200"
-                  }`}
-                >
-                  <p className="font-medium text-block ">
-                    {item[0] && daysOfWeek[item[0].datetime.getDay()]}{" "}
-                  </p>
-                  <p className="text-sm">
-                    {item[0] && item[0].datetime.getDate()}/
-                    {item[0] && item[0].datetime.getMonth() + 1}
-                  </p>
-                </div>
-              ))}
-          </div>
-          <div className="flex items-center gap-3  w-full overflow-x-scroll mt-4">
-            {docSlots.length > 0 &&
-              docSlots[slotIndex].map((item, index) => (
-                <p
-                  onClick={() => setSlotTime(item.time)}
-                  className={`text-sm font-light flex-shrink-0 px-5 py-2 rounded-full cursor-pointer ${
-                    item.time === slotTime
-                      ? "bg-blue-800 text-white"
-                      : "text-gray-800 border border-gray-300 "
-                  }`}
-                  key={index}
-                >
-                  {item.time.toLowerCase()}
-                </p>
-              ))}
-          </div>
-
-          <button
-            onClick={bookAppointment}
-            className="bg-blue-800 text-white text-xl font-light px-14 py-3 rounded-full  my-6 "
-          >
-            Randevu al
-          </button>
-        </div>
-        {/* listing related Doctors */}
-        <RelatedDoctors docId={docId} speciality={docInfo.speciality} />
       </div>
-    )
+
+      <div className="surface-card mt-6 p-5 sm:p-6">
+        <p className="text-xl font-bold text-slate-950">Randevu saatleri</p>
+        <div className="mt-4 flex w-full items-center gap-3 overflow-x-auto pb-2">
+          {docSlots.map((item, index) => (
+            <button
+              type="button"
+              onClick={() => {
+                setSlotIndex(index);
+                setSlotTime("");
+              }}
+              key={index}
+              className={`min-w-20 rounded-2xl px-4 py-4 text-center font-semibold ${slotIndex === index ? "bg-slate-950 text-white" : "border border-slate-200 bg-white text-slate-600 hover:border-cyan-200"}`}
+            >
+              <p>{item[0] && daysOfWeek[item[0].datetime.getDay()]}</p>
+              <p className="text-sm">{item[0] && `${item[0].datetime.getDate()}/${item[0].datetime.getMonth() + 1}`}</p>
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-4 flex w-full items-center gap-3 overflow-x-auto pb-2">
+          {docSlots[slotIndex]?.map((item, index) => (
+            <button
+              type="button"
+              onClick={() => setSlotTime(item.time)}
+              className={`flex-shrink-0 rounded-full px-5 py-2 text-sm font-semibold ${item.time === slotTime ? "bg-cyan-700 text-white" : "border border-slate-200 bg-white text-slate-700 hover:border-cyan-200"}`}
+              key={index}
+            >
+              {item.time}
+            </button>
+          ))}
+        </div>
+
+        <button onClick={bookAppointment} className="btn-primary my-6">
+          Randevu al
+        </button>
+      </div>
+
+      <RelatedDoctors docId={docId} speciality={docInfo.speciality} />
+    </div>
   );
 }

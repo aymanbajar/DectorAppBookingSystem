@@ -1,39 +1,43 @@
-import { assets } from '../assets/assets_frontend/assets.js';
-export default function Header(){
-    return (
-      <div className="flex flex-col md:flex-row flex-wrap bg-blue-600 px-6 md:px-10 lg:px-20  font-serif rounded-2xl">
-        {/* left side */}
+import { assets } from "../assets/assets_frontend/assets.js";
 
-        <div className="md:w-1/2 flex flex-col items-start justify-center gap-4 py-10 m-auto md:py-[10vw] md:mb-[-30px] ">
-          <p className="uppercase text-3xl md:text-4xl lg:text-5xl text-white leading-tight md:leading-tight lg:leading-tight">
-            güvenilir doktorlardan <br /> randevu al{" "}
-          </p>
-          <div className="flex flex-col md:flex-row items-center gap-3  text-white ">
-            <img
-              className="w-28"
-              src={assets.group_profiles}
-              alt=" group profiles"
-            />
-            <p className="text-sm md:text-base lg:text-lg">
-              Güvenilir doktorlardan oluşan geniş listemize göz atın,{" "}
-              <br className="hidden sm:block" />
-              randevunuzu zahmetsizce planlayın
+export default function Header() {
+  return (
+    <section className="relative mt-8 overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-900/20">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(34,211,238,0.22),transparent_32%),radial-gradient(circle_at_80%_20%,rgba(16,185,129,0.18),transparent_28%)]" />
+      <div className="relative grid min-h-[520px] items-end gap-8 px-6 pt-10 sm:px-10 md:grid-cols-[1.05fr_0.95fr] lg:px-16">
+        <div className="z-10 flex flex-col items-start justify-center gap-7 pb-10 md:pb-16">
+          <span className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-cyan-100 backdrop-blur">
+            Sağlık randevuları daha kolay
+          </span>
+          <div className="space-y-5">
+            <h1 className="max-w-2xl text-4xl font-bold leading-tight sm:text-5xl lg:text-6xl">
+              Güvenilir doktorlardan hızlıca randevu alın
+            </h1>
+            <p className="max-w-xl text-base leading-8 text-slate-200 sm:text-lg">
+              Uzman doktorları karşılaştırın, uygun saatleri görün ve bakımınızı
+              birkaç adımda planlayın.
             </p>
           </div>
-          <a href="#speciality" className='flex items-center gap-2 bg-white px-8 py-3 rounded-full text-gray-600 text-sm m-auto md:m-0 hover:scale-150 transition-all  duration-300'>
-            Randevu al <img className=' w-3 ' src={assets.arrow_icon} alt="arrow icon" />
-          </a>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+            <a href="#speciality" className="btn-primary bg-white text-slate-950 hover:bg-cyan-100">
+              Randevu al
+              <img className="w-3" src={assets.arrow_icon} alt="" />
+            </a>
+            <div className="flex items-center gap-3 text-sm text-slate-200">
+              <img className="w-24" src={assets.group_profiles} alt="Hasta profilleri" />
+              <span>Binlerce hasta tarafından tercih edildi</span>
+            </div>
+          </div>
         </div>
 
-        {/* right side */}
-
-        <div className="md:w-1/2 relative  ">
+        <div className="relative min-h-[300px] md:min-h-[520px]">
           <img
-            className="w-full md:absolute bottom-0 h-auto rounded-lg"
+            className="absolute bottom-0 right-0 max-h-[520px] w-full object-contain object-bottom"
             src={assets.header_img}
-            alt="Header Image"
+            alt="Doktorlar"
           />
         </div>
       </div>
-    );
+    </section>
+  );
 }

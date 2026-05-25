@@ -2,59 +2,42 @@ import { assets } from "../assets/assets_frontend/assets.js";
 
 export default function Contact() {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 font-sans  font-serif">
-      {/* Title */}
-      <div className="text-center mb-10">
-        <p className="text-3xl font-bold text-gray-900">Bize Ulaşın</p>
-        <p className="text-gray-600 mt-2 text-2xl">
-          Sorularınız veya talepleriniz için bizimle iletişime geçin
+    <section className="py-12">
+      <div className="mb-10 text-center">
+        <p className="section-eyebrow">İletişim</p>
+        <h1 className="section-title mt-2">Bize Ulaşın</h1>
+        <p className="section-copy mx-auto mt-3">
+          Sorularınız, talepleriniz veya iş birlikleri için bizimle iletişime geçin.
         </p>
       </div>
 
-      {/* Content */}
-      <div className="flex flex-col md:flex-row gap-10 items-center">
-        {/* Image */}
-        <div className="flex-1">
-          <img
-            src={assets.contact_image}
-            alt="contact image"
-            className="rounded-xl shadow-lg w-full object-cover"
-          />
-        </div>
+      <div className="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center">
+        <img src={assets.contact_image} alt="İletişim" className="h-full min-h-80 w-full rounded-[2rem] object-cover shadow-xl shadow-slate-900/10" />
 
-        {/* Info */}
-        <div className="flex-1 bg-white p-8 rounded-xl shadow-md space-y-6">
+        <div className="surface-card space-y-6 p-6 sm:p-8">
           <div>
-            <p className="text-2xl font-semibold text-gray-800">Ofisimiz</p>
-            <p className="text-gray-600 mt-1">
-              Yıldız Caddesi No:5, Ofis 14, Sarıyer/İstanbul
-            </p>
+            <p className="text-xl font-bold text-slate-950">Ofisimiz</p>
+            <p className="mt-2 text-slate-600">Yıldız Caddesi No:5, Ofis 14, Sarıyer/İstanbul</p>
           </div>
-
-          <div>
-            <p className="text-gray-800 font-medium">Telefon:</p>
-            <p className="text-gray-600">+90 212 345 67 89</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="text-sm font-semibold text-slate-500">Telefon</p>
+              <p className="mt-1 font-bold text-slate-950">+90 212 345 67 89</p>
+            </div>
+            <div className="rounded-2xl bg-slate-50 p-4">
+              <p className="text-sm font-semibold text-slate-500">E-posta</p>
+              <p className="mt-1 font-bold text-slate-950">info@dectorapp.com</p>
+            </div>
           </div>
-
-          <div>
-            <p className="text-gray-800 font-medium">E-posta:</p>
-            <p className="text-gray-600">info@dectorapp.com</p>
-          </div>
-
-          <div>
-            <p className="text-2xl font-semibold text-gray-800">
-              Ekibimize Katıl
+          <div className="rounded-2xl bg-cyan-50 p-5">
+            <p className="text-xl font-bold text-slate-950">Ekibimize katıl</p>
+            <p className="mt-2 leading-7 text-slate-600">
+              Ekiplerimiz ve açık pozisyonlarımız hakkında daha fazla bilgi edinin.
             </p>
-            <p className="text-gray-600 mt-1">
-              Ekiplerimiz ve açık pozisyonlarımız hakkında daha fazla bilgi
-              edinin.{" "}
-            </p>
-            <button className="mt-4 bg-blue-600 text-white px-6 py-3 rounded-full font-medium hover:bg-blue-700 transition">
-              İş Fırsatlarını Keşfedin
-            </button>
+            <button className="btn-primary mt-4">İş Fırsatlarını Keşfedin</button>
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

@@ -1,10 +1,8 @@
-import { useContext } from "react";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 export default function Login() {
   const { backendUrl, token, setToken } = useContext(AppContext);
@@ -13,120 +11,74 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const navigate = useNavigate();
+
   const onSubmitHeader = async (event) => {
     event.preventDefault();
     try {
-      if (state === "Kayıt ol") {
-        const { data } = await axios.post(`${backendUrl}/api/user/register`, {
-          name,
-          email,
-          password,
-        });
-        if (data.success) {
-          localStorage.setItem("token", data.token);
-          setToken(data.token);
-        } else {
-          toast.error(data.message);
-        }
-      }else{
-        const { data } = await axios.post(`${backendUrl}/api/user/login`, {
-          email,
-          password,
-        });
-        if (data.success) {
-          localStorage.setItem("token", data.token);
-          setToken(data.token);
-        } else {
-          toast.error(data.message);
-        }
+      const endpoint = state === "Kayıt ol" ? "register" : "login";
+      const payload = state === "Kayıt ol" ? { name, email, password } : { email, password };
+      const { data } = await axios.post(`${backendUrl}/api/user/${endpoint}`, payload);
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+      } else {
+        toast.error(data.message);
       }
     } catch (error) {
       console.log(error);
       toast.error("Bir hata oluştu, lütfen tekrar deneyin.");
     }
   };
-useEffect(() => {
-  if(token){
-    navigate('/');
-  }
-}, [token]);
+
+  useEffect(() => {
+    if (token) navigate("/");
+  }, [token, navigate]);
+
   return (
-    <div className="flex justify-center items-center min-h-screen font-serif ">
-      <form
-        onSubmit={onSubmitHeader}
-        className="bg-white shadow-2xl rounded-xl p-10 w-full max-w-md"
-      >
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
+    <section className="grid min-h-[calc(100vh-5rem)] place-items-center py-12">
+      <form onSubmit={onSubmitHeader} className="surface-card w-full max-w-md p-8">
+        <p className="section-eyebrow">{state === "Kayıt ol" ? "Yeni hesap" : "Hoş geldiniz"}</p>
+        <h1 className="mt-2 text-3xl font-bold text-slate-950">
           {state === "Kayıt ol" ? "Hesap Oluştur" : "Giriş Yap"}
-        </h2>
-        <p className="text-gray-500 mb-6 text-[19px]">
-          Lütfen {state === "Kayıt ol" ? "hesap oluşturun " : "giriş yapın "}
-           randevu almak için.
+        </h1>
+        <p className="mt-3 text-sm leading-6 text-slate-500">
+          Randevu almak ve geçmiş işlemlerinizi takip etmek için devam edin.
         </p>
 
-        {state === "Kayıt ol" && (
-          <div className="mb-4">
-            <label className="block text-gray-700 mb-1">ADI SOYADI</label>
-            <input
-              type="text"
-              onChange={(e) => setName(e.target.value)}
-              value={name}
-              className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-            />
-          </div>
-        )}
+        <div className="mt-7 space-y-4">
+          {state === "Kayıt ol" && (
+            <label className="block">
+              <span className="mb-2 block text-sm font-semibold text-slate-700">Ad Soyad</span>
+              <input type="text" onChange={(e) => setName(e.target.value)} value={name} className="form-input" required />
+            </label>
+          )}
 
-        <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Email</label>
-          <input
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-slate-700">E-posta</span>
+            <input type="email" onChange={(e) => setEmail(e.target.value)} value={email} className="form-input" required />
+          </label>
+
+          <label className="block">
+            <span className="mb-2 block text-sm font-semibold text-slate-700">Şifre</span>
+            <input type="password" onChange={(e) => setPassword(e.target.value)} value={password} className="form-input" required />
+          </label>
         </div>
 
-        <div className="mb-6">
-          <label className="block text-gray-700 mb-1">Şifre</label>
-          <input
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
-        >
+        <button type="submit" className="btn-primary mt-7 w-full">
           {state === "Kayıt ol" ? "Hesap Oluştur" : "Giriş Yap"}
         </button>
 
-        <p className="text-center mt-4 text-gray-600">
-          {state === "Kayıt ol" ? (
-            <>
-              Hesabınız var mı?{" "}
-              <span
-                className="text-blue-600 cursor-pointer hover:underline"
-                onClick={() => setState("Giriş")}
-              >
-                Buradan giriş yapın
-              </span>
-            </>
-          ) : (
-            <>
-              Yeni hesap oluştur?{" "}
-              <span
-                className="text-blue-600 cursor-pointer hover:underline"
-                onClick={() => setState("Kayıt ol")}
-              >
-                Buradan
-              </span>
-            </>
-          )}
+        <p className="mt-5 text-center text-sm text-slate-600">
+          {state === "Kayıt ol" ? "Hesabınız var mı? " : "Yeni hesap mı oluşturacaksınız? "}
+          <button
+            type="button"
+            className="font-semibold text-cyan-700 hover:text-cyan-900"
+            onClick={() => setState(state === "Kayıt ol" ? "Giriş" : "Kayıt ol")}
+          >
+            {state === "Kayıt ol" ? "Giriş yapın" : "Kayıt olun"}
+          </button>
         </p>
       </form>
-    </div>
+    </section>
   );
 }

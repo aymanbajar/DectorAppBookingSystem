@@ -2,83 +2,87 @@ import { useContext, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
+const specialities = [
+  "Pratisyen Hekim",
+  "Kadın Doğum Uzmanı",
+  "Dermatoloji",
+  "Çocuk Doktoru",
+  "Nörolog",
+];
+
 export default function Doctors() {
   const navigate = useNavigate();
   const { speciality } = useParams();
   const { doctors } = useContext(AppContext);
-  const [showfilter,setShowfilter] = useState(false)
+  const [showFilter, setShowFilter] = useState(false);
   const [filterDoc, setFilterDoc] = useState([]);
 
   useEffect(() => {
-    if (speciality) {
-      setFilterDoc(doctors.filter((doc) => doc.speciality === speciality));
-    } else {
-      setFilterDoc(doctors);
-    }
+    setFilterDoc(speciality ? doctors.filter((doc) => doc.speciality === speciality) : doctors);
   }, [doctors, speciality]);
 
-  // دالة مساعدة لسهولة التكرار
-  const specialities = [
-    { key: "Pratisyen-Hekim", label: "Pratisyen Hekim" },
-    { key: "Kadın-Doğum-Uzmanı", label: "Kadın Doğum Uzmanı" },
-    { key: "Dermatoloji", label: "Dermatoloji" },
-    { key: "Çocuk-Doktoru", label: "Çocuk Doktoru" },
-    { key: "Nörolog", label: "Nörolog" },
-  ];
-
   return (
-    <div className="font-serif">
-      <p className="text-black text-2xl">
-        Doktorların uzmanlık alanlarına göz atın.
-      </p>
-      <button className={`py-1 px-3 border rounded text-xl  transition-all sm:hidden ${showfilter ? 'text-white bg-blue-600' : ''}`} onClick={() => setShowfilter(prev => !prev)}>Filters</button>
-
-      <div className={`flex flex-col md:flex-row items-start gap-5 mt-5 ${showfilter ? 'flex': 'hidden sm:flex '}`}>
-        {/* الفلاتر */}
-        <div className="flex flex-col gap-4 text-xl text-gray-800">
-          {specialities.map((sp) => (
-            <p
-              key={sp.key}
-              onClick={() =>
-                speciality === sp.key
-                  ? navigate("/doctors")
-                  : navigate(`/doctors/${sp.key}`)
-              }
-              className={`w-[94vw] sm:w-auto pl-3 py-1.5 pr-16 border border-gray-300 rounded cursor-pointer transition-all ${
-                speciality === sp.key ? "bg-indigo-100 text-black" : ""
-              }`}
-            >
-              {sp.label}
-            </p>
-          ))}
+    <section className="py-10">
+      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="section-eyebrow">Doktorlar</p>
+          <h1 className="section-title mt-2">Uzmanlık alanına göre keşfedin</h1>
+          <p className="section-copy mt-3">
+            Size uygun doktoru seçin ve müsait randevu saatlerini görüntüleyin.
+          </p>
         </div>
-
-        {/* عرض الأطباء */}
-        <div
-          className="w-full grid gap-4 gap-y-6"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-          }}
+        <button
+          className={`btn-secondary sm:hidden ${showFilter ? "border-cyan-300 text-cyan-700" : ""}`}
+          onClick={() => setShowFilter((prev) => !prev)}
         >
+          Filtreler
+        </button>
+      </div>
+
+      <div className="flex flex-col items-start gap-6 lg:flex-row">
+        <aside className={`${showFilter ? "block" : "hidden sm:block"} w-full lg:w-72`}>
+          <div className="surface-card sticky top-28 space-y-2 p-3">
+            <button
+              onClick={() => navigate("/doctors")}
+              className={`w-full rounded-xl px-4 py-3 text-left text-sm font-semibold ${!speciality ? "bg-slate-950 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+            >
+              Tüm uzmanlıklar
+            </button>
+            {specialities.map((sp) => (
+              <button
+                key={sp}
+                onClick={() => navigate(speciality === sp ? "/doctors" : `/doctors/${sp}`)}
+                className={`w-full rounded-xl px-4 py-3 text-left text-sm font-semibold ${speciality === sp ? "bg-cyan-50 text-cyan-800" : "text-slate-600 hover:bg-slate-50"}`}
+              >
+                {sp}
+              </button>
+            ))}
+          </div>
+        </aside>
+
+        <div className="grid w-full gap-5 sm:grid-cols-2 xl:grid-cols-4">
           {filterDoc.map((item) => (
-            <div
+            <button
               key={item._id}
               onClick={() => navigate(`/Appointments/${item._id}`)}
-              className="border border-blue-200 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-2 transition-all duration-500"
+              className="doctor-card text-left"
+              type="button"
             >
-              <img className="bg-gray-50" src={item.image} alt={item.name} />
-              <div className="p-4">
-                  <div className={`flex items-center  gap-2 text-xl text-center ${item.available ? 'text-green-500' : 'text-gray-500'}`}>
-                  <p className={`w-2 h-2 ${item.available ? 'bg-green-500' : 'bg-gray-500'} rounded-full`}></p>
-                  <p>{item.available ? 'Müsait' : 'Müsait Değil'}</p>
-                </div>
-                <p className="text-gray-900 text-lg">{item.name}</p>
-                <p className="text-gray-900 text-lg">{item.speciality}</p>
+              <div className="bg-gradient-to-b from-cyan-50 to-slate-50">
+                <img className="aspect-[4/3] w-full object-contain p-2" src={item.image} alt={item.name} />
               </div>
-            </div>
+              <div className="space-y-2 p-4">
+                <div className={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold ${item.available ? "bg-emerald-50 text-emerald-700" : "bg-slate-100 text-slate-500"}`}>
+                  <span className={`h-2 w-2 rounded-full ${item.available ? "bg-emerald-500" : "bg-slate-400"}`} />
+                  {item.available ? "Müsait" : "Müsait Değil"}
+                </div>
+                <p className="font-bold text-slate-950">{item.name}</p>
+                <p className="text-sm text-slate-500">{item.speciality}</p>
+              </div>
+            </button>
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 }
