@@ -66,6 +66,12 @@ export const loginUser = async (req,res) => {
                 message:"Kullanıcı bulunamadı"
             })
         }
+        if(user.disabled){
+            return res.json({
+                success:false,
+                message:"Hesabınız devre dışı bırakıldı"
+            })
+        }
         const isPasswordMatch = await bcrypt.compare(password,user.password);
         if(isPasswordMatch){
             const token = jwt.sign({id:user._id},process.env.JWT_SECRET)
@@ -309,6 +315,31 @@ export const updateMedicalRecord = async (req, res) => {
             medicalRecord: { allergies, medications, chronicDiseases, bloodType, notes }
         });
         res.json({ success:true, message:"Sağlık bilgileri güncellendi" });
+    } catch (error) {
+        console.log(error);
+        res.json({ success:false, message:error.message });
+    }
+}
+
+export const changePassword = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const { currentPassword, newPassword } = req.body;
+        if (!currentPassword || !newPassword) {
+            return res.json({ success:false, message:"Tüm alanları doldurun" });
+        }
+        if (newPassword.length < 8) {
+            return res.json({ success:false, message:"Yeni parola en az 8 karakter olmalıdır" });
+        }
+        const user = await userModel.findById(userId);
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+        if (!isMatch) {
+            return res.json({ success:false, message:"Mevcut parola yanlış" });
+        }
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+        await userModel.findByIdAndUpdate(userId, { password: hashedPassword });
+        res.json({ success:true, message:"Parola başarıyla güncellendi" });
     } catch (error) {
         console.log(error);
         res.json({ success:false, message:error.message });

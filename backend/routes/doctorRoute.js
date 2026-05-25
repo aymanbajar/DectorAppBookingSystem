@@ -1,7 +1,8 @@
 import express from 'express';
-import { doctorList,loginDoctor ,appointmentsDoctor,appointmentCancel,appointmentComplete,appointmentConfirm,appointmentReject,doctorDashboard,  doctorProfile,
+import { doctorList,loginDoctor ,appointmentsDoctor,appointmentCancel,appointmentComplete,appointmentConfirm,appointmentReject,doctorDashboard,  doctorProfile, doctorPatients, doctorPatientDetails, updatePatientRecord, addPrescription, uploadPatientFile, updateAppointmentStatus,
     updateDoctorProfile} from '../controllers/doctorController.js';
 import authDoctor  from '../middlewares/authDoctor.js';
+import upload from '../middlewares/multer.js';
 import { getDoctorChat, getDoctorChats, sendDoctorMessage } from '../controllers/chatController.js';
 import { getDoctorReviews } from '../controllers/reviewController.js';
 import { getDoctorNotifications, markDoctorNotificationsRead } from '../controllers/notificationController.js';
@@ -17,7 +18,13 @@ doctorRouter.post('/reject-appointment', authDoctor, appointmentReject);
 doctorRouter.post('/cancel-appointment', authDoctor, appointmentCancel);
 doctorRouter.get('/dashboard', authDoctor, doctorDashboard);
 doctorRouter.get('/profile', authDoctor, doctorProfile);
-doctorRouter.post('/update-profile', authDoctor, updateDoctorProfile);
+doctorRouter.get('/patients', authDoctor, doctorPatients);
+doctorRouter.get('/patient/:userId', authDoctor, doctorPatientDetails);
+doctorRouter.post('/patient/:userId/record', authDoctor, updatePatientRecord);
+doctorRouter.post('/patient/:userId/prescription', authDoctor, addPrescription);
+doctorRouter.post('/patient/:userId/file', authDoctor, upload.single('file'), uploadPatientFile);
+doctorRouter.post('/appointment/:appointmentId/status', authDoctor, updateAppointmentStatus);
+doctorRouter.post('/update-profile', authDoctor, upload.single('image'), updateDoctorProfile);
 doctorRouter.get('/notifications', authDoctor, getDoctorNotifications);
 doctorRouter.post('/notifications/read', authDoctor, markDoctorNotificationsRead);
 doctorRouter.get('/chats', authDoctor, getDoctorChats);

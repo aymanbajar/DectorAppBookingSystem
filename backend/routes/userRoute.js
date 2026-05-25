@@ -1,5 +1,5 @@
 import express from 'express';
-import {registerUser,loginUser,getProfile,updateProfile,updateMedicalRecord,bookAppointment,listAppointment,cancelAppointment,paymentRazorpay,verifyRazorpay} from '../controllers/userController.js';
+import {registerUser,loginUser,getProfile,updateProfile,updateMedicalRecord,changePassword,bookAppointment,listAppointment,cancelAppointment,paymentRazorpay,verifyRazorpay} from '../controllers/userController.js';
 import { getUserChat, getUserChats, sendUserMessage } from '../controllers/chatController.js';
 import { addReview } from '../controllers/reviewController.js';
 import { getUserNotifications, markUserNotificationsRead } from '../controllers/notificationController.js';
@@ -11,6 +11,7 @@ userRouter.post('/login', loginUser);
 userRouter.get('/get-profile',authUser, getProfile);
 userRouter.post('/update-profile', upload.single('image'), authUser, updateProfile);
 userRouter.post('/update-medical-record', authUser, updateMedicalRecord);
+userRouter.post('/change-password', authUser, changePassword);
 userRouter.post('/book-appointment', authUser, bookAppointment);
 userRouter.get('/appointments', authUser, listAppointment);
 userRouter.post('/cancel-appointment', authUser, cancelAppointment);

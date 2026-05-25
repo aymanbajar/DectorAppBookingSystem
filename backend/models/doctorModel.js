@@ -11,8 +11,34 @@ const doctorSchema = new mongoose.Schema(
     experience: { type: String, required: true },
     about: { type: String, required: true },
     available: { type: Boolean, default: true },
+    approved: { type: Boolean, default: true },
+    disabled: { type: Boolean, default: false },
     fees: { type: Number, required: true },
     address: { type: Object, required: true },
+    workSchedule: {
+      type: [
+        {
+          day: { type: String, default: "" },
+          enabled: { type: Boolean, default: false },
+          start: { type: String, default: "09:00" },
+          end: { type: String, default: "17:00" },
+        },
+      ],
+      default: [],
+    },
+    blockedDays: { type: [String], default: [] },
+    prescriptionTemplates: {
+      type: [
+        {
+          name: { type: String, default: "" },
+          medicine: { type: String, default: "" },
+          dosage: { type: String, default: "" },
+          duration: { type: String, default: "" },
+          notes: { type: String, default: "" },
+        },
+      ],
+      default: [],
+    },
     date: { type: Number, required: true },
     slots_booked: { type: Object, default: {} }
   },

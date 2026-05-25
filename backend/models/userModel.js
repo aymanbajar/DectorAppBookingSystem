@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
   gender: { type: String, default: "Not Selected" },
   dob: { type: String, defualt: "Not Selected" },
   phone: { type: String, default: "0000000000" },
+  disabled: { type: Boolean, default: false },
   medicalRecord: {
     allergies: { type: String, default: "" },
     medications: { type: String, default: "" },
