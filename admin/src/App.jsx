@@ -29,7 +29,7 @@ function App() {
       <Navbar />
       <div className="flex items-start">
         <Sidebar />
-        <main className="min-w-0 flex-1">
+        <main className="min-w-0 flex-1 overflow-x-hidden">
           <Routes>
             {/* Admin Routes */}
           

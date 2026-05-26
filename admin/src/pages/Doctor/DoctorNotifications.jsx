@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { DoctorContext } from "../../context/DoctorContext";
 
 export default function DoctorNotifications() {
-  const { backendUrl, dToken } = useContext(DoctorContext);
+  const { backendUrl, dToken, getUnreadNotifications } = useContext(DoctorContext);
   const [notifications, setNotifications] = useState([]);
 
   const fetchNotifications = async () => {
@@ -12,7 +12,10 @@ export default function DoctorNotifications() {
       const { data } = await axios.get(`${backendUrl}/api/doctor/notifications`, {
         headers: { Authorization: `Bearer ${dToken}` },
       });
-      if (data.success) setNotifications(data.notifications);
+      if (data.success) {
+        setNotifications(data.notifications);
+        getUnreadNotifications();
+      }
     } catch (error) {
       console.log(error);
       toast.error("Bildirimler alınamadı");
@@ -24,6 +27,7 @@ export default function DoctorNotifications() {
       headers: { Authorization: `Bearer ${dToken}` },
     });
     fetchNotifications();
+    getUnreadNotifications();
   };
 
   useEffect(() => {
@@ -34,7 +38,7 @@ export default function DoctorNotifications() {
     <section className="admin-page">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="admin-title mb-0">Bildirimler</h1>
-        <button onClick={markRead} className="admin-button px-5 py-2">Okundu İşaretle</button>
+        <button onClick={markRead} className="admin-button whitespace-nowrap px-5 py-2">Okundu İşaretle</button>
       </div>
 
       <div className="grid gap-4">
@@ -56,3 +60,4 @@ export default function DoctorNotifications() {
     </section>
   );
 }
+

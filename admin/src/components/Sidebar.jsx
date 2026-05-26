@@ -1,12 +1,16 @@
 import { AdminContext } from "../context/AdminContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { DoctorContext } from "../context/DoctorContext";
 
 export default function Sidebar() {
   const { aToken } = useContext(AdminContext);
-  const { dToken } = useContext(DoctorContext);
+  const { dToken, unreadNotifications, getUnreadNotifications } = useContext(DoctorContext);
+
+  useEffect(() => {
+    if (dToken) getUnreadNotifications();
+  }, [dToken]);
 
   const adminLinks = [
     { to: "/admin-dashboard", icon: assets.home_icon, label: "Panel" },
@@ -44,7 +48,12 @@ export default function Sidebar() {
             }
           >
             <img src={link.icon} alt="" className="h-5 w-5" />
-            <span className="hidden md:block">{link.label}</span>
+            <span className="hidden min-w-0 flex-1 md:block">{link.label}</span>
+            {link.to === "/doctor-notifications" && unreadNotifications > 0 && (
+              <span className="ml-auto inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-bold leading-none text-white">
+                {unreadNotifications > 99 ? "99+" : unreadNotifications}
+              </span>
+            )}
           </NavLink>
         ))}
       </nav>

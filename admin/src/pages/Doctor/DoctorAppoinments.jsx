@@ -7,17 +7,22 @@ export default function DoctorAppoinments() {
   const { dToken, appointments, getAppointments, completeAppointment, cancelAppointment, confirmAppointment, rejectAppointment } = useContext(DoctorContext);
   const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
   const [viewMode, setViewMode] = useState("list");
+  const [openAppointmentId, setOpenAppointmentId] = useState("");
+
+  const sortedAppointments = useMemo(() => {
+    return [...appointments].sort((a, b) => getAppointmentTime(b) - getAppointmentTime(a));
+  }, [appointments]);
 
   useEffect(() => {
     if (dToken) getAppointments();
   }, [dToken]);
 
   const appointmentsByDate = useMemo(() => {
-    return appointments.reduce((acc, item) => {
+    return sortedAppointments.reduce((acc, item) => {
       acc[item.sloteDate] = [...(acc[item.sloteDate] || []), item];
       return acc;
     }, {});
-  }, [appointments]);
+  }, [sortedAppointments]);
 
   const statusPill = (item) => {
     if (item.cancelled || item.status === "cancelled") return <span className="status-pill bg-red-50 text-red-600">İptal Edildi</span>;
@@ -57,7 +62,7 @@ export default function DoctorAppoinments() {
         </div>
       ) : (
         <div className="grid gap-4">
-          {[...appointments].reverse().map((item, index) => (
+          {sortedAppointments.map((item, index) => (
             <div className="admin-card p-5" key={item._id}>
               <div className="grid gap-4 lg:grid-cols-[0.4fr_1.8fr_1fr_1fr_1.4fr_1fr] lg:items-center">
                 <p className="hidden text-slate-500 lg:block">#{index + 1}</p>
@@ -91,6 +96,9 @@ export default function DoctorAppoinments() {
               </div>
 
               <div className="mt-4 flex flex-wrap gap-2">
+                <button onClick={() => setOpenAppointmentId((prev) => prev === item._id ? "" : item._id)} className="rounded-full bg-slate-100 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200">
+                  Detaylar
+                </button>
                 {item.status === "pending" && !item.cancelled && (
                   <>
                     <button onClick={() => confirmAppointment(item._id)} className="rounded-full bg-cyan-700 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-800">Onayla</button>
@@ -104,10 +112,94 @@ export default function DoctorAppoinments() {
                   </>
                 )}
               </div>
+
+              {openAppointmentId === item._id && <AppointmentDetails appointment={item} />}
             </div>
           ))}
         </div>
       )}
     </section>
   );
+}
+
+function AppointmentDetails({ appointment }) {
+  const record = appointment.patientRecord || {};
+  const treatmentPlan = record.treatmentPlan || {};
+  const labRequests = record.labRequests || [];
+  const prescriptions = record.prescriptions || [];
+  const tasks = record.tasks || [];
+  const files = record.files || [];
+
+  return (
+    <div className="mt-4 grid gap-4 border-t border-slate-100 pt-4 xl:grid-cols-2">
+      <DetailCard title="Takip ve risk">
+        <InfoLine label="Takip durumu" value={record.followUpStatus || "-"} />
+        <InfoLine label="Risk" value={record.riskLevel || "-"} />
+        <InfoLine label="Takip tarihi" value={record.followUpDate || "-"} />
+      </DetailCard>
+
+      <DetailCard title="Tedavi planı">
+        <InfoLine label="Durum" value={treatmentPlan.status || "-"} />
+        <InfoLine label="Sonraki kontrol" value={treatmentPlan.nextReviewDate || "-"} />
+        <InfoLine label="Hedefler" value={treatmentPlan.goals || "-"} />
+        <InfoLine label="Talimatlar" value={treatmentPlan.instructions || "-"} />
+      </DetailCard>
+
+      <DetailCard title="Görevler ve takip">
+        {tasks.length ? tasks.map((task, index) => (
+          <InfoLine key={`${task.title}-${index}`} label={task.done ? "Tamamlandı" : "Açık"} value={`${task.title || "-"}${task.dueDate ? ` | ${task.dueDate}` : ""}`} />
+        )) : <p className="text-sm text-slate-500">Görev yok.</p>}
+      </DetailCard>
+
+      <DetailCard title="Doktor notları">
+        <p className="whitespace-pre-wrap text-sm leading-6 text-slate-600">{record.privateNotes || "Not yok."}</p>
+      </DetailCard>
+
+      <DetailCard title="Yazılan reçete">
+        {prescriptions.length ? prescriptions.map((item) => (
+          <div key={item._id || `${item.medicine}-${item.createdAt}`} className="rounded-xl bg-white p-3 text-sm text-slate-600">
+            <p className="font-bold text-slate-950">{item.medicine}</p>
+            <p>{item.dosage} | {item.duration}</p>
+            {item.notes && <p className="mt-1">{item.notes}</p>}
+          </div>
+        )) : <p className="text-sm text-slate-500">Reçete yok.</p>}
+      </DetailCard>
+
+      <DetailCard title="Tahlil isteği">
+        {labRequests.length ? labRequests.map((item) => (
+          <InfoLine key={item._id || `${item.testName}-${item.createdAt}`} label={item.status || "requested"} value={`${item.testName || "-"}${item.notes ? ` | ${item.notes}` : ""}`} />
+        )) : <p className="text-sm text-slate-500">Tahlil isteği yok.</p>}
+      </DetailCard>
+
+      <DetailCard title="Hasta dosyaları">
+        {files.length ? files.map((file) => (
+          <a key={file._id || file.fileUrl} href={file.fileUrl} target="_blank" rel="noreferrer" className="block rounded-xl bg-white p-3 text-sm font-bold text-cyan-700">
+            {file.title || "Dosya"}
+          </a>
+        )) : <p className="text-sm text-slate-500">Dosya yok.</p>}
+      </DetailCard>
+    </div>
+  );
+}
+
+function DetailCard({ title, children }) {
+  return <div className="rounded-2xl bg-slate-50 p-4"><p className="mb-3 font-bold text-slate-950">{title}</p><div className="grid gap-2">{children}</div></div>;
+}
+
+function InfoLine({ label, value }) {
+  return <p className="text-sm leading-6 text-slate-600"><span className="font-semibold text-slate-800">{label}:</span> {value}</p>;
+}
+
+function getAppointmentTime(appointment) {
+  const [day, month, year] = String(appointment.sloteDate || "").split("-").map(Number);
+  const time = String(appointment.sloteTime || "00:00").trim();
+  const match = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+  let hour = match ? Number(match[1]) : 0;
+  const minute = match ? Number(match[2]) : 0;
+  const meridiem = match?.[3]?.toUpperCase();
+
+  if (meridiem === "PM" && hour < 12) hour += 12;
+  if (meridiem === "AM" && hour === 12) hour = 0;
+
+  return new Date(year || 0, (month || 1) - 1, day || 1, hour, minute).getTime();
 }

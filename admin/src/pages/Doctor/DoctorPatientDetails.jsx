@@ -123,10 +123,36 @@ export default function DoctorPatientDetails() {
     setTask(emptyTask);
   };
 
-  const addLabRequest = () => {
+  const addLabRequest = async () => {
     if (!labRequest.testName) return;
-    setRecord((prev) => ({ ...prev, labRequests: [...(prev.labRequests || []), labRequest] }));
-    setLabRequest(emptyLabRequest);
+    const nextRecord = { ...record, labRequests: [...(record.labRequests || []), labRequest] };
+    setRecord(nextRecord);
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/doctor/patient/${userId}/record`,
+        {
+          privateNotes: nextRecord.privateNotes,
+          followUpStatus: nextRecord.followUpStatus,
+          riskLevel: nextRecord.riskLevel,
+          followUpDate: nextRecord.followUpDate,
+          tags: nextRecord.tags,
+          treatmentPlan: nextRecord.treatmentPlan,
+          tasks: nextRecord.tasks,
+          labRequests: nextRecord.labRequests,
+        },
+        { headers: authHeaders }
+      );
+      if (data.success) {
+        toast.success("Tahlil isteği kaydedildi");
+        setRecord(data.record);
+        setLabRequest(emptyLabRequest);
+      } else {
+        toast.error(data.message || "Tahlil isteği kaydedilemedi");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Tahlil isteği kaydedilemedi");
+    }
   };
 
   const addTag = () => {

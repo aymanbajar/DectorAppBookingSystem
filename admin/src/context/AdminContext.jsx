@@ -142,7 +142,6 @@ const AdminContextProvider =(props) => {
             }); 
             if(data.success){
                 setAppointments(data.appointments);
-                toast.success('Randevular alındı');
             }else{
                 toast.error('Randevular alınamadı');
             }
@@ -220,3 +219,4 @@ const getDashData = async() => {
     )
 }
 export default AdminContextProvider;
+

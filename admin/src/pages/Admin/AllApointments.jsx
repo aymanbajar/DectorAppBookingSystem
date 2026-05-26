@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { AdminContext } from "../../context/AdminContext";
 import { AppContext } from "../../context/AppContext";
 import { assets } from "../../assets/assets";
@@ -6,6 +6,10 @@ import { assets } from "../../assets/assets";
 export default function AllApointments() {
   const { aToken, appointments, getAllAppointments, cancelAppointment } = useContext(AdminContext);
   const { calculateAge, slotDateFormat, currency } = useContext(AppContext);
+
+  const sortedAppointments = useMemo(() => {
+    return [...appointments].sort((a, b) => getAppointmentTime(b) - getAppointmentTime(a));
+  }, [appointments]);
 
   useEffect(() => {
     if (aToken) getAllAppointments();
@@ -19,7 +23,7 @@ export default function AllApointments() {
           <p>#</p><p>Hasta</p><p>Yaş</p><p>Tarih & Saat</p><p>Doktor</p><p>Ücret</p><p>İşlemler</p>
         </div>
         <div className="divide-y divide-slate-100">
-          {appointments.map((item, index) => (
+          {sortedAppointments.map((item, index) => (
             <div className="grid gap-3 px-6 py-4 text-slate-600 hover:bg-slate-50 sm:grid-cols-[0.4fr_2fr_0.8fr_2fr_2fr_0.8fr_1fr] sm:items-center" key={item._id}>
               <p className="hidden sm:block">{index + 1}</p>
               <div className="flex items-center gap-2"><img className="h-9 w-9 rounded-full object-cover" src={item.userData.image} alt="" /><p className="font-semibold text-slate-800">{item.userData.name}</p></div>
@@ -36,4 +40,18 @@ export default function AllApointments() {
       </div>
     </section>
   );
+}
+
+function getAppointmentTime(appointment) {
+  const [day, month, year] = String(appointment.sloteDate || "").split("-").map(Number);
+  const time = String(appointment.sloteTime || "00:00").trim();
+  const match = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+  let hour = match ? Number(match[1]) : 0;
+  const minute = match ? Number(match[2]) : 0;
+  const meridiem = match?.[3]?.toUpperCase();
+
+  if (meridiem === "PM" && hour < 12) hour += 12;
+  if (meridiem === "AM" && hour === 12) hour = 0;
+
+  return new Date(year || 0, (month || 1) - 1, day || 1, hour, minute).getTime();
 }

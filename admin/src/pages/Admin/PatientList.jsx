@@ -75,34 +75,34 @@ export default function PatientList() {
         </select>
       </div>
       <div className="admin-card overflow-hidden">
-        <div className="hidden grid-cols-[1.4fr_1.5fr_1fr_170px] gap-4 border-b border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-600 md:grid">
+        <div className="hidden grid-cols-[minmax(0,1.4fr)_minmax(0,1.5fr)_minmax(0,1fr)_minmax(150px,170px)] gap-4 border-b border-slate-200 bg-slate-50 p-4 text-sm font-bold text-slate-600 md:grid">
           <span>Hasta</span>
           <span>İletişim</span>
           <span>Sağlık Kaydı</span>
           <span>İşlem</span>
         </div>
         {filteredPatients.length ? filteredPatients.map((patient) => (
-          <div key={patient._id} className="grid gap-4 border-b border-slate-100 p-4 text-sm md:grid-cols-[1.4fr_1.5fr_1fr_170px] md:items-center">
-            <div className="flex items-center gap-3">
-              <img className="h-12 w-12 rounded-full object-cover" src={patient.image} alt={patient.name} />
-              <div>
-                <p className="font-bold text-slate-950">{patient.name}</p>
+          <div key={patient._id} className="grid gap-4 border-b border-slate-100 p-4 text-sm md:grid-cols-[minmax(0,1.4fr)_minmax(0,1.5fr)_minmax(0,1fr)_minmax(150px,170px)] md:items-center">
+            <div className="flex min-w-0 items-center gap-3">
+              <img className="h-12 w-12 shrink-0 rounded-full object-cover" src={patient.image} alt={patient.name} />
+              <div className="min-w-0">
+                <p className="truncate font-bold text-slate-950">{patient.name}</p>
                 <p className="text-slate-500">{patient.gender || "Belirtilmedi"} • {patient.dob || "Doğum tarihi yok"}</p>
                 {patient.disabled && <span className="mt-1 inline-block rounded-full bg-red-50 px-2 py-1 text-xs font-bold text-red-600">Devre dışı</span>}
               </div>
             </div>
-            <div className="text-slate-600">
-              <p>{patient.email}</p>
-              <p>{patient.phone || "Telefon yok"}</p>
+            <div className="min-w-0 text-slate-600">
+              <p className="truncate">{patient.email}</p>
+              <p className="truncate">{patient.phone || "Telefon yok"}</p>
             </div>
-            <div className="text-slate-600">
+            <div className="min-w-0 text-slate-600">
               <p>Kan: {patient.medicalRecord?.bloodType || "-"}</p>
               <p className="truncate">Alerji: {patient.medicalRecord?.allergies || "-"}</p>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <button onClick={() => openEditor(patient)} className="admin-button bg-cyan-700 py-2 text-sm">Düzenle</button>
-              <button onClick={() => deletePatient(patient._id)} className="admin-button bg-red-600 py-2 text-sm">Sil</button>
-              <button onClick={() => setPatientStatus(patient._id, !patient.disabled)} className="col-span-2 rounded-full bg-slate-100 px-3 py-2 text-sm font-bold text-slate-700">{patient.disabled ? "Aktifleştir" : "Devre dışı bırak"}</button>
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => openEditor(patient)} className="admin-button flex-1 bg-cyan-700 px-3 py-2 text-sm">Düzenle</button>
+              <button onClick={() => deletePatient(patient._id)} className="admin-button flex-1 bg-red-600 px-3 py-2 text-sm">Sil</button>
+              <button onClick={() => setPatientStatus(patient._id, !patient.disabled)} className="w-full rounded-full bg-slate-100 px-3 py-2 text-sm font-bold text-slate-700">{patient.disabled ? "Aktifleştir" : "Devre dışı bırak"}</button>
             </div>
           </div>
         )) : (
@@ -156,3 +156,4 @@ function setMedicalRecord(setEditingPatient, field, value) {
     medicalRecord: { ...prev.medicalRecord, [field]: value },
   }));
 }
+
