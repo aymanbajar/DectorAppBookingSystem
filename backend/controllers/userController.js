@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 import razorpay from 'razorpay';
 import { createNotification } from './notificationController.js';
+import doctorPatientRecordModel from '../models/doctorPatientRecordModel.js';
 // api to  register user
 export const registerUser = async (req, res) => {
     try{
@@ -241,10 +242,17 @@ export const bookAppointment  =async(req,res) => {
 export const  listAppointment = async(req,res) => {
     try{
         const userId = req.userId;
-        const appointments = await appointmentModel.find({userId});
+        const appointments = await appointmentModel.find({userId}).sort({ date: -1 });
+        const docIds = [...new Set(appointments.map((item) => item.docId))];
+        const records = await doctorPatientRecordModel.find({ userId, docId: { $in: docIds } });
+        const recordMap = new Map(records.map((record) => [record.docId, record]));
+        const appointmentsWithRecords = appointments.map((appointment) => ({
+            ...appointment.toObject(),
+            patientRecord: recordMap.get(appointment.docId) || null,
+        }));
         res.json({
             success:true,
-            appointments
+            appointments: appointmentsWithRecords
         })
 
     }catch(error){

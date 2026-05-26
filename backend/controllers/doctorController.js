@@ -78,10 +78,17 @@ const loginDoctor = async (req, res) => {
 const appointmentsDoctor = async (req, res) => {
   try {
     const docId = req.docId;
-    const appointments = await appointmentModel.find({ docId });
+    const appointments = await appointmentModel.find({ docId }).sort({ date: -1 });
+    const userIds = [...new Set(appointments.map((item) => item.userId))];
+    const records = await doctorPatientRecordModel.find({ docId, userId: { $in: userIds } });
+    const recordMap = new Map(records.map((record) => [record.userId, record]));
+    const appointmentsWithRecords = appointments.map((appointment) => ({
+      ...appointment.toObject(),
+      patientRecord: recordMap.get(appointment.userId) || null,
+    }));
     res.json({
       success: true,
-      appointments,
+      appointments: appointmentsWithRecords,
     });
   } catch (error) {
     console.log(error);
@@ -222,7 +229,14 @@ const appointmentReject = async (req, res) => {
 const doctorDashboard = async (req, res) => {
   try {
     const docId = req.docId;
-    const appointments = await appointmentModel.find({ docId });
+    const appointments = await appointmentModel.find({ docId }).sort({ date: -1 });
+    const userIds = [...new Set(appointments.map((item) => item.userId))];
+    const records = await doctorPatientRecordModel.find({ docId, userId: { $in: userIds } });
+    const recordMap = new Map(records.map((record) => [record.userId, record]));
+    const appointmentsWithRecords = appointments.map((appointment) => ({
+      ...appointment.toObject(),
+      patientRecord: recordMap.get(appointment.userId) || null,
+    }));
     let earnings = 0;
     appointments.map((item) => {
       if(item.isCompleted || item.payment){
@@ -381,6 +395,8 @@ const updatePatientRecord = async (req, res) => {
     } = req.body;
     const hasAppointment = await appointmentModel.exists({ docId, userId });
     if (!hasAppointment) return res.json({ success: false, message: "Hasta bulunamadı" });
+    const previousRecord = await doctorPatientRecordModel.findOne({ docId, userId });
+    const previousLabKeys = new Set((previousRecord?.labRequests || []).map((item) => `${item.testName}|${item.notes}`));
     const record = await doctorPatientRecordModel.findOneAndUpdate(
       { docId, userId },
       {
@@ -397,7 +413,18 @@ const updatePatientRecord = async (req, res) => {
       },
       { new: true, upsert: true }
     );
-    res.json({ success: true, message: "Hasta notları güncellendi", record });
+    const newLabRequests = (record.labRequests || []).filter((item) => item.testName && !previousLabKeys.has(`${item.testName}|${item.notes}`));
+    for (const request of newLabRequests) {
+      await createNotification({
+        recipientType: "user",
+        recipientId: userId,
+        title: "Yeni tahlil istegi",
+        message: `${request.testName}${request.notes ? ` - ${request.notes}` : ""}`,
+        link: "/my-appointments",
+        dedupeKey: `lab-request-${record._id}-${request._id}`,
+      });
+    }
+    res.json({ success: true, message: "Hasta notlari guncellendi", record });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });
@@ -544,3 +571,7 @@ export {
     updateAppointmentStatus,
     updateDoctorProfile
 };
+
+
+
+
