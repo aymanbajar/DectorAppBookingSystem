@@ -3,13 +3,12 @@ import appointmentModel from "../models/appointmentModel.js";
 
 export const createNotification = async ({ recipientType, recipientId, title, message, link = "", dedupeKey }) => {
   try {
+    const safeDedupeKey = dedupeKey || `notification-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
     if (dedupeKey) {
-      const existing = await notificationModel.findOne({ recipientType, recipientId, dedupeKey });
+      const existing = await notificationModel.findOne({ recipientType, recipientId, dedupeKey: safeDedupeKey });
       if (existing) return;
     }
-    const notificationData = { recipientType, recipientId, title, message, link };
-    if (dedupeKey) notificationData.dedupeKey = dedupeKey;
-    await notificationModel.create(notificationData);
+    await notificationModel.create({ recipientType, recipientId, title, message, link, dedupeKey: safeDedupeKey });
   } catch (error) {
     console.log("Notification error:", error.message);
   }

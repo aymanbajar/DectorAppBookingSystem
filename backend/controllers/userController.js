@@ -8,7 +8,20 @@ import { v2 as cloudinary } from 'cloudinary';
 import razorpay from 'razorpay';
 import { createNotification } from './notificationController.js';
 import doctorPatientRecordModel from '../models/doctorPatientRecordModel.js';
+import appointmentDetailModel from '../models/appointmentDetailModel.js';
 // api to  register user
+const getAppointmentTime = (appointment) => {
+    const [day, month, year] = String(appointment.sloteDate || "").split("-").map(Number);
+    const time = String(appointment.sloteTime || "00:00").trim();
+    const match = time.match(/(\d{1,2}):(\d{2})\s*(AM|PM)?/i);
+    let hour = match ? Number(match[1]) : 0;
+    const minute = match ? Number(match[2]) : 0;
+    const meridiem = match?.[3]?.toUpperCase();
+    if (meridiem === "PM" && hour < 12) hour += 12;
+    if (meridiem === "AM" && hour === 12) hour = 0;
+    return new Date(year || 0, (month || 1) - 1, day || 1, hour, minute).getTime();
+};
+
 export const registerUser = async (req, res) => {
     try{
         const {name,email,password} = req.body;
@@ -242,13 +255,14 @@ export const bookAppointment  =async(req,res) => {
 export const  listAppointment = async(req,res) => {
     try{
         const userId = req.userId;
-        const appointments = await appointmentModel.find({userId}).sort({ date: -1 });
+        const appointments = (await appointmentModel.find({userId})).sort((a, b) => getAppointmentTime(b) - getAppointmentTime(a) || b.date - a.date);
         const docIds = [...new Set(appointments.map((item) => item.docId))];
-        const records = await doctorPatientRecordModel.find({ userId, docId: { $in: docIds } });
-        const recordMap = new Map(records.map((record) => [record.docId, record]));
+        const appointmentIds = appointments.map((item) => item._id.toString());
+        const details = await appointmentDetailModel.find({ patientId: userId, appointmentId: { $in: appointmentIds } });
+        const detailMap = new Map(details.map((detail) => [detail.appointmentId, detail]));
         const appointmentsWithRecords = appointments.map((appointment) => ({
             ...appointment.toObject(),
-            patientRecord: recordMap.get(appointment.docId) || null,
+            appointmentDetails: detailMap.get(appointment._id.toString()) || null,
         }));
         res.json({
             success:true,
@@ -264,6 +278,33 @@ export const  listAppointment = async(req,res) => {
         })
     }
 
+}
+
+export const listPatientPrescriptions = async (req, res) => {
+    try {
+        const userId = req.userId;
+        const details = await appointmentDetailModel.find({ patientId: userId, "prescriptions.0": { $exists: true } }).sort({ updatedAt: -1 });
+        const appointmentIds = details.map((detail) => detail.appointmentId);
+        const appointments = await appointmentModel.find({ _id: { $in: appointmentIds } });
+        const appointmentMap = new Map(appointments.map((appointment) => [appointment._id.toString(), appointment]));
+        const prescriptions = details.flatMap((detail) => {
+            const appointment = appointmentMap.get(detail.appointmentId);
+            return (detail.prescriptions || []).map((prescription) => ({
+                ...prescription.toObject(),
+                prescriptionId: prescription._id,
+                appointmentId: detail.appointmentId,
+                patientId: detail.patientId,
+                doctorId: detail.doctorId,
+                doctorData: appointment?.docData,
+                appointmentDate: appointment?.sloteDate,
+                appointmentTime: appointment?.sloteTime,
+            }));
+        }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        res.json({ success: true, prescriptions });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
 }
 
 // api  to  cancel  appointment

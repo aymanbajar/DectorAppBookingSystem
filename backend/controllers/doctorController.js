@@ -4,8 +4,24 @@ import jwt from "jsonwebtoken";
 import appointmentModel from "../models/appointmentModel.js";
 import userModel from "../models/userModel.js";
 import doctorPatientRecordModel from "../models/doctorPatientRecordModel.js";
+import appointmentDetailModel from "../models/appointmentDetailModel.js";
 import { v2 as cloudinary } from "cloudinary";
 import { createNotification } from "./notificationController.js";
+const normalizeAppointmentStatus = (status = "") => String(status).trim().toLocaleLowerCase("tr-TR");
+const isFinalAppointmentStatus = (appointment) => {
+  const status = normalizeAppointmentStatus(appointment?.status);
+  return Boolean(appointment?.isCompleted || appointment?.cancelled) || [
+    "completed",
+    "tamamlandı",
+    "tamamlandi",
+    "cancelled",
+    "canceled",
+    "iptal edildi",
+    "iptal",
+    "cancelledappointment",
+  ].includes(status);
+};
+
 const changeAvailablity = async (req, res) => {
   try {
     const { docId } = req.body;
@@ -79,16 +95,16 @@ const appointmentsDoctor = async (req, res) => {
   try {
     const docId = req.docId;
     const appointments = await appointmentModel.find({ docId }).sort({ date: -1 });
-    const userIds = [...new Set(appointments.map((item) => item.userId))];
-    const records = await doctorPatientRecordModel.find({ docId, userId: { $in: userIds } });
-    const recordMap = new Map(records.map((record) => [record.userId, record]));
-    const appointmentsWithRecords = appointments.map((appointment) => ({
+    const appointmentIds = appointments.map((item) => item._id.toString());
+    const details = await appointmentDetailModel.find({ appointmentId: { $in: appointmentIds } });
+    const detailMap = new Map(details.map((detail) => [detail.appointmentId, detail]));
+    const appointmentsWithDetails = appointments.map((appointment) => ({
       ...appointment.toObject(),
-      patientRecord: recordMap.get(appointment.userId) || null,
+      appointmentDetails: detailMap.get(appointment._id.toString()) || null,
     }));
     res.json({
       success: true,
-      appointments: appointmentsWithRecords,
+      appointments: appointmentsWithDetails,
     });
   } catch (error) {
     console.log(error);
@@ -106,6 +122,9 @@ const appointmentComplete = async (req, res) => {
     const appointmentData = await appointmentModel.findById(appointmentId);
     if (appointmentData && appointmentData.docId === docId) 
       {
+        if (isFinalAppointmentStatus(appointmentData)) {
+          return res.json({ success: false, message: "Tamamlanmış veya iptal edilmiş randevu durumu tekrar değiştirilemez" });
+        }
         await appointmentModel.findByIdAndUpdate(appointmentId, {
           isCompleted: true,
           status: "completed",
@@ -143,6 +162,9 @@ const appointmentCancel = async (req, res) => {
     const appointmentData = await appointmentModel.findById(appointmentId);
     if (appointmentData && appointmentData.docId === docId) 
       {
+        if (isFinalAppointmentStatus(appointmentData)) {
+          return res.json({ success: false, message: "Tamamlanmış veya iptal edilmiş randevu durumu tekrar değiştirilemez" });
+        }
         await appointmentModel.findByIdAndUpdate(appointmentId, {
           cancelled: true,
           status: "cancelled",
@@ -179,6 +201,9 @@ const appointmentConfirm = async (req, res) => {
     const docId = req.docId;
     const appointmentData = await appointmentModel.findById(appointmentId);
     if (appointmentData && appointmentData.docId === docId) {
+      if (isFinalAppointmentStatus(appointmentData)) {
+        return res.json({ success: false, message: "Tamamlanmış veya iptal edilmiş randevu durumu tekrar değiştirilemez" });
+      }
       await appointmentModel.findByIdAndUpdate(appointmentId, { status: "confirmed" });
       await createNotification({
         recipientType: "user",
@@ -202,6 +227,9 @@ const appointmentReject = async (req, res) => {
     const docId = req.docId;
     const appointmentData = await appointmentModel.findById(appointmentId);
     if (appointmentData && appointmentData.docId === docId) {
+      if (isFinalAppointmentStatus(appointmentData)) {
+        return res.json({ success: false, message: "Tamamlanmış veya iptal edilmiş randevu durumu tekrar değiştirilemez" });
+      }
       await appointmentModel.findByIdAndUpdate(appointmentId, { status: "rejected", cancelled: true });
       const docData = await doctorModel.findById(docId);
       if (docData?.slots_booked?.[appointmentData.sloteDate]) {
@@ -494,12 +522,129 @@ const updateAppointmentStatus = async (req, res) => {
     }
     const appointment = await appointmentModel.findOne({ _id: appointmentId, docId });
     if (!appointment) return res.json({ success: false, message: "Randevu bulunamadı" });
+    if (isFinalAppointmentStatus(appointment)) {
+      return res.json({ success: false, message: "Tamamlanmış veya iptal edilmiş randevu durumu tekrar değiştirilemez" });
+    }
     await appointmentModel.findByIdAndUpdate(appointmentId, {
       status,
       isCompleted: status === "completed",
       cancelled: status === "cancelled",
     });
     res.json({ success: true, message: "Randevu durumu güncellendi" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const getDoctorAppointmentDetails = async (req, res) => {
+  try {
+    const docId = req.docId;
+    const { appointmentId } = req.params;
+    const appointment = await appointmentModel.findOne({ _id: appointmentId, docId });
+    if (!appointment) return res.json({ success: false, message: "Randevu bulunamadi" });
+
+    const detail = await appointmentDetailModel.findOne({ appointmentId });
+    res.json({ success: true, appointment, detail });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const updateDoctorAppointmentDetails = async (req, res) => {
+  try {
+    const docId = req.docId;
+    const { appointmentId } = req.params;
+    const appointment = await appointmentModel.findOne({ _id: appointmentId, docId });
+    if (!appointment) return res.json({ success: false, message: "Randevu bulunamadi" });
+
+    const previousDetail = await appointmentDetailModel.findOne({ appointmentId });
+    const previousLabKeys = new Set((previousDetail?.labRequests || []).map((item) => `${item.testName}|${item.notes}`));
+    const {
+      visitReason = appointment.visitReason || "",
+      healthRecord = appointment.userData?.medicalRecord || {},
+      followUpStatus = "normal",
+      followUpDate = "",
+      treatmentPlan = {},
+      tasks = [],
+      doctorNotes = "",
+      prescriptions = [],
+      labRequests = [],
+      diagnosis = "",
+      risk = "low",
+      status = "draft",
+      files = [],
+    } = req.body;
+
+    const detail = await appointmentDetailModel.findOneAndUpdate(
+      { appointmentId },
+      {
+        appointmentId,
+        patientId: appointment.userId,
+        doctorId: docId,
+        visitReason,
+        healthRecord,
+        followUpStatus,
+        followUpDate,
+        treatmentPlan,
+        tasks,
+        doctorNotes,
+        prescriptions,
+        labRequests,
+        diagnosis,
+        risk,
+        status,
+        files,
+      },
+      { new: true, upsert: true }
+    );
+
+    if (visitReason !== appointment.visitReason) {
+      await appointmentModel.findByIdAndUpdate(appointmentId, { visitReason });
+    }
+
+    const newLabRequests = (detail.labRequests || []).filter((item) => item.testName && !previousLabKeys.has(`${item.testName}|${item.notes}`));
+    for (const request of newLabRequests) {
+      await createNotification({
+        recipientType: "user",
+        recipientId: appointment.userId,
+        title: "Yeni tahlil istegi",
+        message: `${request.testName}${request.notes ? ` - ${request.notes}` : ""}`,
+        link: "/my-appointments",
+        dedupeKey: `appointment-lab-${appointmentId}-${request._id}`,
+      });
+    }
+
+    res.json({ success: true, message: "Randevu detaylari kaydedildi", detail });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+const getDoctorPrescriptions = async (req, res) => {
+  try {
+    const docId = req.docId;
+    const details = await appointmentDetailModel.find({ doctorId: docId, "prescriptions.0": { $exists: true } }).sort({ updatedAt: -1 });
+    const appointmentIds = details.map((detail) => detail.appointmentId);
+    const appointments = await appointmentModel.find({ _id: { $in: appointmentIds } });
+    const appointmentMap = new Map(appointments.map((appointment) => [appointment._id.toString(), appointment]));
+    const prescriptions = details.flatMap((detail) => {
+      const appointment = appointmentMap.get(detail.appointmentId);
+      return (detail.prescriptions || []).map((prescription) => ({
+        ...prescription.toObject(),
+        prescriptionId: prescription._id,
+        appointmentId: detail.appointmentId,
+        patientId: detail.patientId,
+        doctorId: detail.doctorId,
+        patientData: appointment?.userData,
+        doctorData: appointment?.docData,
+        appointmentDate: appointment?.sloteDate,
+        appointmentTime: appointment?.sloteTime,
+      }));
+    }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    res.json({ success: true, prescriptions });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });
@@ -569,6 +714,9 @@ export {
     addPrescription,
     uploadPatientFile,
     updateAppointmentStatus,
+    getDoctorAppointmentDetails,
+    updateDoctorAppointmentDetails,
+    getDoctorPrescriptions,
     updateDoctorProfile
 };
 

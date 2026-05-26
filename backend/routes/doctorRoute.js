@@ -1,5 +1,5 @@
 import express from 'express';
-import { doctorList,loginDoctor ,appointmentsDoctor,appointmentCancel,appointmentComplete,appointmentConfirm,appointmentReject,doctorDashboard,  doctorProfile, doctorPatients, doctorPatientDetails, updatePatientRecord, addPrescription, uploadPatientFile, updateAppointmentStatus,
+import { doctorList,loginDoctor ,appointmentsDoctor,appointmentCancel,appointmentComplete,appointmentConfirm,appointmentReject,doctorDashboard,  doctorProfile, doctorPatients, doctorPatientDetails, updatePatientRecord, addPrescription, uploadPatientFile, updateAppointmentStatus, getDoctorAppointmentDetails, updateDoctorAppointmentDetails, getDoctorPrescriptions,
     updateDoctorProfile} from '../controllers/doctorController.js';
 import authDoctor  from '../middlewares/authDoctor.js';
 import upload from '../middlewares/multer.js';
@@ -24,6 +24,9 @@ doctorRouter.post('/patient/:userId/record', authDoctor, updatePatientRecord);
 doctorRouter.post('/patient/:userId/prescription', authDoctor, addPrescription);
 doctorRouter.post('/patient/:userId/file', authDoctor, upload.single('file'), uploadPatientFile);
 doctorRouter.post('/appointment/:appointmentId/status', authDoctor, updateAppointmentStatus);
+doctorRouter.get('/appointments/:appointmentId', authDoctor, getDoctorAppointmentDetails);
+doctorRouter.put('/appointments/:appointmentId/details', authDoctor, updateDoctorAppointmentDetails);
+doctorRouter.get('/prescriptions', authDoctor, getDoctorPrescriptions);
 doctorRouter.post('/update-profile', authDoctor, upload.single('image'), updateDoctorProfile);
 doctorRouter.get('/notifications', authDoctor, getDoctorNotifications);
 doctorRouter.get('/notifications/unread-count', authDoctor, getDoctorUnreadNotificationCount);
