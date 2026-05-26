@@ -13,6 +13,7 @@ import RecentDoctors from './pages/RecentDoctors'
 import Chat from './pages/Chat'
 import Notifications from './pages/Notifications'
 import MedicalRecord from './pages/MedicalRecord'
+import MyPrescriptions from './pages/MyPrescriptions'
 
 // components
 import Navbar from './components/Navbar'
@@ -52,6 +53,7 @@ function App() {
           <Route path="/chat/:docId" element={<Chat />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/medical-record" element={<MedicalRecord />} />
+          <Route path="/my-prescriptions" element={<MyPrescriptions />} />
           <Route path="/Appointments/:docId" element={<Appointments />} />
         </Routes>
       </main>

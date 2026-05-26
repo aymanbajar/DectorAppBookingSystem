@@ -152,7 +152,7 @@ export default function MyAppointments() {
                 </div>
               </div>
 
-              {openAppointmentId === item._id && <PatientAppointmentDetails record={item.patientRecord} />}
+              {openAppointmentId === item._id && <PatientAppointmentDetails record={item.appointmentDetails} />}
 
               {item.isCompleted && !item.reviewed && (
                 <div className="border-t border-slate-200 p-5">
@@ -236,3 +236,4 @@ function DetailCard({ title, children }) {
 function InfoLine({ label, value }) {
   return <p className="text-sm leading-6 text-slate-600"><span className="font-semibold text-slate-800">{label}:</span> {value}</p>;
 }
+

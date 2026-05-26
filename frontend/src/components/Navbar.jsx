@@ -58,6 +58,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
                 <div className="min-w-60 rounded-2xl border border-slate-200 bg-white p-2 text-sm text-slate-600 shadow-xl shadow-slate-900/10">
                   <button onClick={() => navigate("/my-profile")} className={menuItemClass}>Profilim</button>
                   <button onClick={() => navigate("/my-appointments")} className={menuItemClass}>Randevularım</button>
+                  <button onClick={() => navigate("/my-prescriptions")} className={menuItemClass}>Recetelerim</button>
                   <button onClick={() => navigate("/medical-record")} className={menuItemClass}>Sağlık kaydı</button>
                   <button onClick={() => navigate("/notifications")} className={`${menuItemClass} flex items-center justify-between gap-3`}>
                     <span>Bildirimler</span>
@@ -95,6 +96,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
             <>
               <NavLink onClick={() => setShowMenu(false)} to="/my-profile"><p className="rounded-2xl px-5 py-4">Profilim</p></NavLink>
               <NavLink onClick={() => setShowMenu(false)} to="/my-appointments"><p className="rounded-2xl px-5 py-4">Randevularım</p></NavLink>
+              <NavLink onClick={() => setShowMenu(false)} to="/my-prescriptions"><p className="rounded-2xl px-5 py-4">Recetelerim</p></NavLink>
               <NavLink onClick={() => setShowMenu(false)} to="/medical-record"><p className="rounded-2xl px-5 py-4">Sağlık kaydı</p></NavLink>
               <NavLink onClick={() => setShowMenu(false)} to="/notifications">
                 <p className="flex items-center justify-between gap-3 rounded-2xl px-5 py-4">
@@ -123,3 +125,4 @@ function NotificationBadge({ count }) {
     </span>
   );
 }
+
