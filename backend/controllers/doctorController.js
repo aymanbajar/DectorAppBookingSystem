@@ -651,6 +651,41 @@ const getDoctorPrescriptions = async (req, res) => {
   }
 };
 
+const updateDoctorPrescription = async (req, res) => {
+  try {
+    const docId = req.docId;
+    const { prescriptionId } = req.params;
+    const { medicine = "", dosage = "", duration = "", notes = "", instructions = "" } = req.body;
+
+    if (!medicine.trim()) {
+      return res.json({ success: false, message: "Ilac adi gerekli" });
+    }
+
+    const detail = await appointmentDetailModel.findOneAndUpdate(
+      { doctorId: docId, "prescriptions._id": prescriptionId },
+      {
+        $set: {
+          "prescriptions.$.medicine": medicine,
+          "prescriptions.$.dosage": dosage,
+          "prescriptions.$.duration": duration,
+          "prescriptions.$.notes": notes,
+          "prescriptions.$.instructions": instructions,
+        },
+      },
+      { new: true }
+    );
+
+    if (!detail) {
+      return res.json({ success: false, message: "Recete bulunamadi" });
+    }
+
+    res.json({ success: true, message: "Recete guncellendi", detail });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
 // api  to update doctor profile info for doctor profile page
 const updateDoctorProfile = async (req, res) => {
   try {
@@ -717,6 +752,7 @@ export {
     getDoctorAppointmentDetails,
     updateDoctorAppointmentDetails,
     getDoctorPrescriptions,
+    updateDoctorPrescription,
     updateDoctorProfile
 };
 
