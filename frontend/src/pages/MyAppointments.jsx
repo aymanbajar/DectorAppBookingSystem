@@ -8,6 +8,7 @@ export default function MyAppointments() {
   const { backendUrl, token, getDoctorsData } = useContext(AppContext);
   const [appointments, setAppointments] = useState([]);
   const [reviewDrafts, setReviewDrafts] = useState({});
+  const [openAppointmentId, setOpenAppointmentId] = useState("");
   const navigate = useNavigate();
   const month = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"];
 
@@ -21,7 +22,7 @@ export default function MyAppointments() {
       const { data } = await axios.get(`${backendUrl}/api/user/appointments`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (data.success) setAppointments(data.appointments.reverse());
+      if (data.success) setAppointments(data.appointments);
       else toast.error("Randevular alınamadı");
     } catch (error) {
       console.log(error);
@@ -143,12 +144,15 @@ export default function MyAppointments() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 sm:flex-col">
+                    <button onClick={() => setOpenAppointmentId((prev) => prev === item._id ? "" : item._id)} className="rounded-full bg-slate-100 px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200">Detaylar</button>
                     {!item.cancelled && item.status !== "rejected" && <button onClick={() => navigate(`/chat/${item.docId}`)} className="rounded-full bg-slate-950 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-700">Doktorla Mesajlaş</button>}
                     {!item.cancelled && !item.payment && !item.isCompleted && item.status === "confirmed" && <button onClick={() => appointmentRazorpay(item._id)} className="rounded-full bg-cyan-700 px-5 py-2 text-sm font-semibold text-white hover:bg-cyan-800">Online Öde</button>}
                     {!item.cancelled && !item.isCompleted && <button onClick={() => cancelAppointment(item._id)} className="rounded-full bg-red-50 px-5 py-2 text-sm font-semibold text-red-600 hover:bg-red-100">Randevuyu İptal Et</button>}
                   </div>
                 </div>
               </div>
+
+              {openAppointmentId === item._id && <PatientAppointmentDetails record={item.patientRecord} />}
 
               {item.isCompleted && !item.reviewed && (
                 <div className="border-t border-slate-200 p-5">
@@ -177,4 +181,58 @@ export default function MyAppointments() {
       )}
     </section>
   );
+}
+
+function PatientAppointmentDetails({ record }) {
+  const treatmentPlan = record?.treatmentPlan || {};
+  const prescriptions = record?.prescriptions || [];
+  const labRequests = record?.labRequests || [];
+  const files = record?.files || [];
+
+  return (
+    <div className="grid gap-4 border-t border-slate-200 p-5 lg:grid-cols-2">
+      <DetailCard title="Tedavi planı">
+        <InfoLine label="Durum" value={treatmentPlan.status || "-"} />
+        <InfoLine label="Sonraki kontrol" value={treatmentPlan.nextReviewDate || "-"} />
+        <InfoLine label="Hedefler" value={treatmentPlan.goals || "Plan yok."} />
+        <InfoLine label="Talimatlar" value={treatmentPlan.instructions || "-"} />
+      </DetailCard>
+
+      <DetailCard title="Doktor notları">
+        <p className="whitespace-pre-wrap text-sm leading-6 text-slate-600">{record?.privateNotes || "Not yok."}</p>
+      </DetailCard>
+
+      <DetailCard title="Reçete">
+        {prescriptions.length ? prescriptions.map((item) => (
+          <div key={item._id || `${item.medicine}-${item.createdAt}`} className="rounded-xl bg-slate-50 p-3 text-sm text-slate-600">
+            <p className="font-bold text-slate-950">{item.medicine}</p>
+            <p>{item.dosage} | {item.duration}</p>
+            {item.notes && <p className="mt-1">{item.notes}</p>}
+          </div>
+        )) : <p className="text-sm text-slate-500">Reçete yok.</p>}
+      </DetailCard>
+
+      <DetailCard title="Tahlil isteği">
+        {labRequests.length ? labRequests.map((item) => (
+          <InfoLine key={item._id || `${item.testName}-${item.createdAt}`} label={item.status || "requested"} value={`${item.testName || "-"}${item.notes ? ` | ${item.notes}` : ""}`} />
+        )) : <p className="text-sm text-slate-500">Tahlil isteği yok.</p>}
+      </DetailCard>
+
+      <DetailCard title="Dosyalar">
+        {files.length ? files.map((file) => (
+          <a key={file._id || file.fileUrl} href={file.fileUrl} target="_blank" rel="noreferrer" className="block rounded-xl bg-slate-50 p-3 text-sm font-bold text-cyan-700">
+            {file.title || "Dosya"}
+          </a>
+        )) : <p className="text-sm text-slate-500">Dosya yok.</p>}
+      </DetailCard>
+    </div>
+  );
+}
+
+function DetailCard({ title, children }) {
+  return <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-100"><p className="mb-3 font-bold text-slate-950">{title}</p><div className="grid gap-2">{children}</div></div>;
+}
+
+function InfoLine({ label, value }) {
+  return <p className="text-sm leading-6 text-slate-600"><span className="font-semibold text-slate-800">{label}:</span> {value}</p>;
 }
