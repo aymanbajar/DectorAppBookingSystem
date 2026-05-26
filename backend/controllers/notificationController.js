@@ -100,6 +100,18 @@ export const getUserNotifications = async (req, res) => {
   }
 };
 
+export const getUserUnreadNotificationCount = async (req, res) => {
+  try {
+    await createAppointmentStatusNotifications(req.userId);
+    await createUpcomingAppointmentNotifications(req.userId);
+    const count = await notificationModel.countDocuments({ recipientType: "user", recipientId: req.userId, read: false });
+    res.json({ success: true, count });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
 export const markUserNotificationsRead = async (req, res) => {
   try {
     await notificationModel.updateMany({ recipientType: "user", recipientId: req.userId, read: false }, { read: true });
@@ -114,6 +126,16 @@ export const getDoctorNotifications = async (req, res) => {
   try {
     const notifications = await notificationModel.find({ recipientType: "doctor", recipientId: req.docId }).sort({ createdAt: -1 });
     res.json({ success: true, notifications });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export const getDoctorUnreadNotificationCount = async (req, res) => {
+  try {
+    const count = await notificationModel.countDocuments({ recipientType: "doctor", recipientId: req.docId, read: false });
+    res.json({ success: true, count });
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });

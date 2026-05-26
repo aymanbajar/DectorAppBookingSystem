@@ -441,12 +441,26 @@ const broadcastNotification = async (req, res) => {
     const { recipientType = "user", title, message, link = "" } = req.body;
     if (!title || !message) return res.json({ success: false, message: "Başlık ve mesaj gerekli" });
     const recipients = recipientType === "doctor" ? await doctorModel.find({}).select("_id") : await userModel.find({}).select("_id");
-    await notificationModel.insertMany(recipients.map((item) => ({ recipientType, recipientId: item._id.toString(), title, message, link })), { ordered: false });
-    await logActivity("notification_broadcast", recipientType, "", { title, count: recipients.length });
-    res.json({ success: true, message: "Bildirim gönderildi" });
+    if (!["user", "doctor"].includes(recipientType)) return res.json({ success: false, message: "Gecersiz alici tipi" });
+    if (!recipients.length) return res.json({ success: false, message: "Alici bulunamadi" });
+
+    const dedupeKey = `broadcast-${recipientType}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const result = await notificationModel.bulkWrite(
+      recipients.map((item) => ({
+        updateOne: {
+          filter: { recipientType, recipientId: item._id.toString(), dedupeKey },
+          update: { $setOnInsert: { recipientType, recipientId: item._id.toString(), title, message, link, dedupeKey, read: false } },
+          upsert: true,
+        },
+      })),
+      { ordered: false }
+    );
+    const sentCount = result.upsertedCount || recipients.length;
+    await logActivity("notification_broadcast", recipientType, "", { title, count: sentCount });
+    res.json({ success: true, message: `${sentCount} kisiye bildirim gonderildi` });
   } catch (error) {
     console.log(error);
-    res.json({ success: true, message: "Bildirimler gönderildi" });
+    res.json({ success: false, message: error.message });
   }
 };
 
@@ -464,3 +478,4 @@ const updateSiteSettings = async (req, res) => {
 
 
 export { addDoctor, loginAdmin, allDoctors, allPatients, updateDoctor, deleteDoctor, deletePatient, updatePatient, appointmentsAdmin, appointmentCancel, adminDashboard, adminCenter, addSpecialty, updateSpecialty, deleteSpecialty, setDoctorStatus, setPatientStatus, deleteReview, broadcastNotification, updateSiteSettings };
+

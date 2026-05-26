@@ -2,7 +2,7 @@ import express from 'express';
 import {registerUser,loginUser,getProfile,updateProfile,updateMedicalRecord,changePassword,bookAppointment,listAppointment,cancelAppointment,paymentRazorpay,verifyRazorpay} from '../controllers/userController.js';
 import { getUserChat, getUserChats, sendUserMessage } from '../controllers/chatController.js';
 import { addReview } from '../controllers/reviewController.js';
-import { getUserNotifications, markUserNotificationsRead } from '../controllers/notificationController.js';
+import { getUserNotifications, getUserUnreadNotificationCount, markUserNotificationsRead } from '../controllers/notificationController.js';
 import authUser from '../middlewares/authUser.js'
 import upload from '../middlewares/multer.js';
 const userRouter = express.Router();
@@ -19,6 +19,7 @@ userRouter.post('/payment-razorpay', authUser, paymentRazorpay);
 userRouter.post('/verifyRazorpay', authUser, verifyRazorpay);
 userRouter.post('/review', authUser, addReview);
 userRouter.get('/notifications', authUser, getUserNotifications);
+userRouter.get('/notifications/unread-count', authUser, getUserUnreadNotificationCount);
 userRouter.post('/notifications/read', authUser, markUserNotificationsRead);
 userRouter.get('/chats', authUser, getUserChats);
 userRouter.get('/chat/:docId', authUser, getUserChat);

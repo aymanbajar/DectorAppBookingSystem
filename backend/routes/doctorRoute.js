@@ -5,7 +5,7 @@ import authDoctor  from '../middlewares/authDoctor.js';
 import upload from '../middlewares/multer.js';
 import { getDoctorChat, getDoctorChats, sendDoctorMessage } from '../controllers/chatController.js';
 import { getDoctorReviews } from '../controllers/reviewController.js';
-import { getDoctorNotifications, markDoctorNotificationsRead } from '../controllers/notificationController.js';
+import { getDoctorNotifications, getDoctorUnreadNotificationCount, markDoctorNotificationsRead } from '../controllers/notificationController.js';
 const doctorRouter = express.Router();
 
 doctorRouter.get('/list', doctorList);
@@ -26,6 +26,7 @@ doctorRouter.post('/patient/:userId/file', authDoctor, upload.single('file'), up
 doctorRouter.post('/appointment/:appointmentId/status', authDoctor, updateAppointmentStatus);
 doctorRouter.post('/update-profile', authDoctor, upload.single('image'), updateDoctorProfile);
 doctorRouter.get('/notifications', authDoctor, getDoctorNotifications);
+doctorRouter.get('/notifications/unread-count', authDoctor, getDoctorUnreadNotificationCount);
 doctorRouter.post('/notifications/read', authDoctor, markDoctorNotificationsRead);
 doctorRouter.get('/chats', authDoctor, getDoctorChats);
 doctorRouter.get('/chat/:userId', authDoctor, getDoctorChat);

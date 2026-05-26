@@ -342,6 +342,10 @@ const doctorPatientDetails = async (req, res) => {
     if (!appointments.length) {
       return res.json({ success: false, message: "Hasta bulunamadı" });
     }
+    const doctor = await doctorModel.findById(docId).select("disabled approved");
+    if (!doctor) {
+      return res.json({ success: false, message: "Doktor bulunamadi" });
+    }
     if (doctor.disabled || !doctor.approved) {
       return res.json({
         success: false,
