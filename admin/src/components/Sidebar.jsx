@@ -24,6 +24,7 @@ export default function Sidebar() {
   const doctorLinks = [
     { to: "/doctor-dashboard", icon: assets.home_icon, label: "Panel" },
     { to: "/doctor-appointments", icon: assets.appointment_icon, label: "Randevular" },
+    { to: "/doctor-prescriptions", icon: assets.list_icon, label: "Receteler" },
     { to: "/doctor-patients", icon: assets.people_icon, label: "Hastalarım" },
     { to: "/doctor-chat", icon: assets.chats_icon || assets.appointment_icon, label: "Mesajlar" },
     { to: "/doctor-notifications", icon: assets.list_icon, label: "Bildirimler" },
@@ -60,3 +61,4 @@ export default function Sidebar() {
     </aside>
   );
 }
+

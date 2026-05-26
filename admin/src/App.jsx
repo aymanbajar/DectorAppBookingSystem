@@ -18,6 +18,8 @@ import DoctorAppoinments from "./pages/Doctor/DoctorAppoinments";
 import DoctorProfile from "./pages/Doctor/DoctorProfile";
 import DoctorChat from "./pages/Doctor/DoctorChat";
 import DoctorNotifications from "./pages/Doctor/DoctorNotifications";
+import DoctorAppointmentDetails from "./pages/Doctor/DoctorAppointmentDetails";
+import DoctorPrescriptions from "./pages/Doctor/DoctorPrescriptions";
 import DoctorPatients from "./pages/Doctor/DoctorPatients";
 import DoctorPatientDetails from "./pages/Doctor/DoctorPatientDetails";
 function App() {
@@ -44,6 +46,8 @@ function App() {
             {/* Doctor Routes */}
             <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
             <Route path="/doctor-appointments" element={<DoctorAppoinments />} />
+            <Route path="/doctor-appointments/:appointmentId" element={<DoctorAppointmentDetails />} />
+            <Route path="/doctor-prescriptions" element={<DoctorPrescriptions />} />
             <Route path="/doctor-profile" element={<DoctorProfile />} />
             <Route path="/doctor-chat" element={<DoctorChat />} />
             <Route path="/doctor-patients" element={<DoctorPatients />} />
