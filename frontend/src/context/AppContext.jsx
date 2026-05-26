@@ -10,6 +10,7 @@ const AppContextProvider = (props) => {
   const [doctors, setDoctors] = useState([]);
   const [token, setToken] = useState(localStorage.getItem("token") || false);
   const [userData, setUserData] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
 
   const getDoctorsData = async () => {
     try {
@@ -41,6 +42,22 @@ const AppContextProvider = (props) => {
     }
   };
 
+  const getUnreadNotifications = async () => {
+    if (!token) {
+      setUnreadNotifications(0);
+      return;
+    }
+
+    try {
+      const { data } = await axios.get(`${backendUrl}/api/user/notifications/unread-count`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (data.success) setUnreadNotifications(data.count || 0);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const value = {
     doctors,
     getDoctorsData,
@@ -51,6 +68,9 @@ const AppContextProvider = (props) => {
     userData,
     setUserData,
     loadUserProfileData,
+    unreadNotifications,
+    setUnreadNotifications,
+    getUnreadNotifications,
   };
 
   useEffect(() => {
@@ -60,9 +80,18 @@ const AppContextProvider = (props) => {
   useEffect(() => {
     if (token) {
       loadUserProfileData();
+      getUnreadNotifications();
     } else {
       setUserData(false);
+      setUnreadNotifications(0);
     }
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) return undefined;
+
+    const intervalId = setInterval(getUnreadNotifications, 30000);
+    return () => clearInterval(intervalId);
   }, [token]);
 
   return <AppContext.Provider value={value}>{props.children}</AppContext.Provider>;

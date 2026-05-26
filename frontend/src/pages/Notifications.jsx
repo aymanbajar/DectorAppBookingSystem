@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { AppContext } from "../context/AppContext";
 
 export default function Notifications() {
-  const { backendUrl, token } = useContext(AppContext);
+  const { backendUrl, token, getUnreadNotifications } = useContext(AppContext);
   const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
 
@@ -14,7 +14,10 @@ export default function Notifications() {
       const { data } = await axios.get(`${backendUrl}/api/user/notifications`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (data.success) setNotifications(data.notifications);
+      if (data.success) {
+        setNotifications(data.notifications);
+        getUnreadNotifications();
+      }
     } catch (error) {
       console.log(error);
       toast.error("Bildirimler alınamadı");
@@ -26,6 +29,7 @@ export default function Notifications() {
       headers: { Authorization: `Bearer ${token}` },
     });
     fetchNotifications();
+    getUnreadNotifications();
   };
 
   useEffect(() => {

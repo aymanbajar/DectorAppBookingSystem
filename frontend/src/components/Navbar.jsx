@@ -18,7 +18,7 @@ const links = [
 export default function Navbar({ darkMode, setDarkMode }) {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const { token, setToken, userData } = useContext(AppContext);
+  const { token, setToken, userData, unreadNotifications } = useContext(AppContext);
 
   const logout = () => {
     setToken(false);
@@ -59,7 +59,10 @@ export default function Navbar({ darkMode, setDarkMode }) {
                   <button onClick={() => navigate("/my-profile")} className={menuItemClass}>Profilim</button>
                   <button onClick={() => navigate("/my-appointments")} className={menuItemClass}>Randevularım</button>
                   <button onClick={() => navigate("/medical-record")} className={menuItemClass}>Sağlık kaydı</button>
-                  <button onClick={() => navigate("/notifications")} className={menuItemClass}>Bildirimler</button>
+                  <button onClick={() => navigate("/notifications")} className={`${menuItemClass} flex items-center justify-between gap-3`}>
+                    <span>Bildirimler</span>
+                    <NotificationBadge count={unreadNotifications} />
+                  </button>
                   <button onClick={() => setDarkMode((prev) => !prev)} className={menuItemClass}>Tema: {darkMode ? "Light" : "Dark"}</button>
                   <button onClick={logout} className="w-full rounded-xl px-4 py-3 text-left text-red-600 hover:bg-red-50">Çıkış yap</button>
                 </div>
@@ -93,7 +96,12 @@ export default function Navbar({ darkMode, setDarkMode }) {
               <NavLink onClick={() => setShowMenu(false)} to="/my-profile"><p className="rounded-2xl px-5 py-4">Profilim</p></NavLink>
               <NavLink onClick={() => setShowMenu(false)} to="/my-appointments"><p className="rounded-2xl px-5 py-4">Randevularım</p></NavLink>
               <NavLink onClick={() => setShowMenu(false)} to="/medical-record"><p className="rounded-2xl px-5 py-4">Sağlık kaydı</p></NavLink>
-              <NavLink onClick={() => setShowMenu(false)} to="/notifications"><p className="rounded-2xl px-5 py-4">Bildirimler</p></NavLink>
+              <NavLink onClick={() => setShowMenu(false)} to="/notifications">
+                <p className="flex items-center justify-between gap-3 rounded-2xl px-5 py-4">
+                  <span>Bildirimler</span>
+                  <NotificationBadge count={unreadNotifications} />
+                </p>
+              </NavLink>
               <button onClick={() => setDarkMode((prev) => !prev)} className="rounded-2xl px-5 py-4 text-left">Tema: {darkMode ? "Light" : "Dark"}</button>
             </>
           )}
@@ -103,5 +111,15 @@ export default function Navbar({ darkMode, setDarkMode }) {
         </nav>
       </div>
     </header>
+  );
+}
+
+function NotificationBadge({ count }) {
+  if (!count) return null;
+
+  return (
+    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-red-600 px-1.5 text-xs font-bold leading-none text-white">
+      {count > 99 ? "99+" : count}
+    </span>
   );
 }
