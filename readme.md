@@ -1,322 +1,352 @@
-# 🏥 Doctor Appointment Booking System
+# Doctor Appointment Booking System
 
-Tam özellikli bir doktor randevu sistemi - hastalar, doktorlar ve yöneticiler için üç ayrı panel içerir.
-kullanıcı için
-https://dector-app-booking-system-z5fe.vercel.app/
-user@example.com - asd12345
+نظام حجز مواعيد طبية مبني بتقنية MERN، ويضم ثلاث واجهات رئيسية: واجهة المرضى، لوحة الإدارة، ولوحة الأطباء. يتيح النظام البحث عن الأطباء، حجز المواعيد، إدارة المرضى، متابعة السجلات الطبية، الوصفات، المحادثات، الإشعارات، والمدفوعات عبر Razorpay.
 
-admin için 
-https://dector-app-booking-system-epv3mb9yn-aymanbajars-projects.vercel.app/
-admin@example.com -asd1234
+## روابط التجربة
 
- doctor için 
- https://dector-app-booking-system-epv3mb9yn-aymanbajars-projects.vercel.app/
-ahmet@yilmaz.com - asd12345
+### واجهة المستخدم
 
+الرابط: https://dector-app-booking-system.vercel.app/
 
-## 📋 Özellikler
+بيانات الدخول التجريبية:
 
-### 👤 Hasta Paneli (Frontend)
-- Kullanıcı kaydı ve girişi
-- Uzmanlık alanına göre doktor arama
-- Doktor profili görüntüleme
-- Online randevu alma
-- Randevu geçmişi görüntüleme
-- Randevu iptal etme
-- Profil yönetimi
-- Razorpay ile ödeme entegrasyonu
+```text
+Email: ayman@bajar.com
+Password: 12345678
+```
 
-### 👨‍⚕️ Doktor Paneli
-- Doktor girişi
-- Randevu listesi görüntüleme
-- Randevu onaylama/iptal etme
-- Randevu tamamlama
-- Profil bilgilerini güncelleme
-- Müsaitlik durumu ayarlama
-- Dashboard istatistikleri
+### لوحة الإدارة
 
-### 👨‍💼 Admin Paneli
-- Admin girişi
-- Yeni doktor ekleme
-- Doktor listesi yönetimi
-- Doktor müsaitlik durumu değiştirme
-- Tüm randevuları görüntüleme
-- Randevu iptal etme
-- Dashboard istatistikleri
+الرابط:https://dector-app-booking-system-alor.vercel.app
 
-## 🛠️ Teknolojiler
+بيانات الدخول التجريبية:
+
+```text
+Email: admin@example.com
+Password: asd1234
+```
+
+### لوحة الطبيب
+
+الرابط: https://dector-app-booking-system-alor.vercel.app
+
+بيانات الدخول التجريبية:
+
+```text
+Email: ahmet@yilmaz.com
+Password: 12345678
+```
+
+## الميزات
+
+### واجهة المرضى
+
+- إنشاء حساب وتسجيل الدخول.
+- استعراض الأطباء والتصفية حسب التخصص.
+- عرض ملف الطبيب وتفاصيله وتقييماته.
+- حجز المواعيد واختيار الوقت المناسب.
+- متابعة المواعيد وإلغاء الموعد عند الحاجة.
+- الدفع عبر Razorpay والتحقق من عملية الدفع.
+- إدارة الملف الشخصي وتحديث البيانات الطبية.
+- عرض الوصفات الطبية.
+- إضافة الأطباء إلى المفضلة ومقارنة الأطباء.
+- عرض آخر الأطباء الذين تمت زيارتهم.
+- المحادثة مع الطبيب.
+- استقبال الإشعارات ومتابعة غير المقروء منها.
+- دعم الوضع الداكن في الواجهة.
+
+### لوحة الطبيب
+
+- تسجيل دخول الطبيب.
+- لوحة تحكم تعرض الإحصائيات والمواعيد القريبة.
+- عرض المواعيد وتأكيدها أو رفضها أو إكمالها أو إلغاؤها.
+- عرض تفاصيل الموعد وتحديث التشخيص والخطة العلاجية والملاحظات.
+- إدارة المرضى المرتبطين بالطبيب وسجلاتهم الطبية.
+- إضافة وصفات طبية وطلبات تحاليل ومرفقات.
+- إدارة الوصفات وتعديلها.
+- تحديث ملف الطبيب وساعات العمل والأيام المحجوبة.
+- المحادثة مع المرضى.
+- استقبال الإشعارات.
+
+### لوحة الإدارة
+
+- تسجيل دخول المدير.
+- لوحة تحكم للإحصائيات العامة مثل عدد الأطباء والمرضى والمواعيد والإيرادات.
+- إضافة طبيب جديد مع رفع الصورة إلى Cloudinary.
+- إدارة قائمة الأطباء وتعديل بياناتهم أو حذفهم.
+- الموافقة على الأطباء أو تعطيل حساباتهم.
+- إدارة المرضى وتحديث بياناتهم أو تعطيل حساباتهم.
+- عرض كل المواعيد وإلغاؤها.
+- إدارة التخصصات الطبية.
+- إدارة التقييمات وحذف غير المناسب منها.
+- إرسال إشعارات جماعية للمرضى أو الأطباء.
+- إعدادات الموقع مثل نصوص الصفحة الرئيسية والأطباء المميزين.
+- سجل نشاطات إدارية لمتابعة العمليات المهمة.
+
+## التقنيات المستخدمة
 
 ### Backend
-- **Node.js** & **Express.js** - Server framework
-- **MongoDB** & **Mongoose** - Database
-- **JWT** - Authentication
-- **bcrypt** - Password hashing
-- **Cloudinary** - Image storage
-- **Multer** - File upload
-- **Razorpay** - Payment gateway
 
-### Frontend (Hasta Paneli)
-- **React** & **Vite** - UI framework
-- **React Router** - Navigation
-- **Axios** - HTTP client
-- **Tailwind CSS** - Styling
-- **React Toastify** - Notifications
+- Node.js
+- Express.js
+- MongoDB و Mongoose
+- JSON Web Token للتحقق من الهوية
+- bcrypt لتشفير كلمات المرور
+- Multer لرفع الملفات
+- Cloudinary لتخزين الصور والملفات
+- Razorpay لمعالجة المدفوعات
 
-### Admin & Doctor Panel
-- **React** & **Vite**
-- **React Router**
-- **Axios**
-- **Tailwind CSS**
-- **React Toastify**
+### Frontend و Admin
 
-## 📁 Proje Yapısı
+- React
+- Vite
+- React Router
+- Axios
+- Tailwind CSS
+- React Toastify
 
-```
+## بنية المشروع
+
+```text
 DectorAppBookingSystem/
-│
 ├── backend/
 │   ├── config/
-│   │   ├── cloudinary.js
-│   │   └── mongodb.js
 │   ├── controllers/
-│   │   ├── adminController.js
-│   │   ├── doctorController.js
-│   │   └── userController.js
 │   ├── middlewares/
-│   │   ├── authAdmin.js
-│   │   ├── authDoctor.js
-│   │   ├── authUser.js
-│   │   └── multer.js
 │   ├── models/
-│   │   ├── appointmentModel.js
-│   │   ├── doctorModel.js
-│   │   └── userModel.js
 │   ├── routes/
-│   │   ├── adminRoute.js
-│   │   ├── doctorRoute.js
-│   │   └── userRoute.js
 │   ├── uploads/
-│   ├── .env
 │   ├── package.json
 │   └── server.js
-│
 ├── frontend/
-│   ├── public/
 │   ├── src/
 │   │   ├── assets/
 │   │   ├── components/
-│   │   │   ├── Banner.jsx
-│   │   │   ├── Footer.jsx
-│   │   │   ├── Header.jsx
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── RelatedDoctors.jsx
-│   │   │   ├── SpecialityMenu.jsx
-│   │   │   └── TopDoctors.jsx
 │   │   ├── context/
-│   │   │   └── AppContext.jsx
-│   │   ├── pages/
-│   │   │   ├── About.jsx
-│   │   │   ├── Appointments.jsx
-│   │   │   ├── Contact.jsx
-│   │   │   ├── Doctors.jsx
-│   │   │   ├── Home.jsx
-│   │   │   ├── Login.jsx
-│   │   │   ├── MyAppointments.jsx
-│   │   │   └── MyProfile.jsx
-│   │   ├── App.jsx
-│   │   └── main.jsx
-│   ├── .env
+│   │   └── pages/
 │   ├── package.json
 │   └── vite.config.js
-│
-└── admin/
-    ├── public/
-    ├── src/
-    │   ├── assets/
-    │   ├── components/
-    │   │   ├── Navbar.jsx
-    │   │   └── Sidebar.jsx
-    │   ├── context/
-    │   │   ├── AdminContext.jsx
-    │   │   ├── AppContext.jsx
-    │   │   └── DoctorContext.jsx
-    │   ├── pages/
-    │   │   ├── Admin/
-    │   │   │   ├── AddDoctor.jsx
-    │   │   │   ├── AllApointments.jsx
-    │   │   │   ├── Dashboard.jsx
-    │   │   │   └── DoctorList.jsx
-    │   │   ├── Doctor/
-    │   │   │   ├── DoctorAppoinments.jsx
-    │   │   │   ├── DoctorDashboard.jsx
-    │   │   │   └── DoctorProfile.jsx
-    │   │   └── Login.jsx
-    │   ├── App.jsx
-    │   └── main.jsx
-    ├── .env
-    ├── package.json
-    └── vite.config.js
+├── admin/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── context/
+│   │   └── pages/
+│   ├── package.json
+│   └── vite.config.js
+└── readme.md
 ```
 
-## 🚀 Kurulum
+## متطلبات التشغيل
 
-### 1. Depoyu Klonlayın
+- Node.js 20 أو أحدث.
+- حساب MongoDB Atlas أو قاعدة MongoDB محلية.
+- حساب Cloudinary.
+- حساب Razorpay لاستخدام الدفع.
+
+## التشغيل محلياً
+
+### 1. تثبيت المشروع
+
 ```bash
 git clone https://github.com/aymanbajar/DectorAppBookingSystem.git
 cd DectorAppBookingSystem
 ```
 
-### 2. Backend Kurulumu
+### 2. تشغيل Backend
 
 ```bash
 cd backend
 npm install
 ```
 
-`.env` dosyası oluşturun:
+أنشئ ملف `.env` داخل مجلد `backend`:
+
 ```env
+PORT=4000
 MONGODB_URL=your_mongodb_connection_string
 CLOUDINARY_NAME=your_cloudinary_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_SECRET_KEY=your_cloudinary_secret_key
 ADMIN_EMAIL=admin@example.com
 ADMIN_PASSWORD=your_admin_password
-JWT_SECRET=your_jwt_secret_key
+JWT_SECRET=your_jwt_secret
 RAZORPAY_KEY_ID=your_razorpay_key_id
 RAZORPAY_KEY_SECRET=your_razorpay_key_secret
 CURRENCY=TRY
 ```
 
-Backend'i başlatın:
-```bash
-npm run server
-```
+ثم شغل الخادم:
 
-### 3. Frontend Kurulumu (Hasta Paneli)
-
-```bash
-cd frontend
-npm install
-```
-
-`.env` dosyası oluşturun:
-```env
-VITE_BACKEND_URL=http://localhost:4000
-```
-
-Frontend'i başlatın:
 ```bash
 npm run dev
 ```
 
-### 4. Admin/Doctor Panel Kurulumu
+سيعمل الخادم افتراضياً على:
+
+```text
+http://localhost:4000
+```
+
+### 3. تشغيل واجهة المرضى
 
 ```bash
-cd admin
+cd ../frontend
 npm install
 ```
 
-`.env` dosyası oluşturun:
+أنشئ ملف `.env` داخل مجلد `frontend`:
+
 ```env
 VITE_BACKEND_URL=http://localhost:4000
+VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
 ```
 
-Admin paneli başlatın:
+ثم شغل الواجهة:
+
 ```bash
 npm run dev
 ```
 
-## 🔑 Varsayılan Admin Bilgileri
+### 4. تشغيل لوحة الإدارة والطبيب
 
+```bash
+cd ../admin
+npm install
 ```
-Email: admin@example.com
-Password: asd1234
+
+أنشئ ملف `.env` داخل مجلد `admin`:
+
+```env
+VITE_BACKEND_URL=http://localhost:4000
 ```
 
-## 📡 API Endpoints
+ثم شغل اللوحة:
 
-### Admin Routes
-- `POST /api/admin/add-doctor` - Yeni doktor ekle
-- `POST /api/admin/login` - Admin girişi
-- `POST /api/admin/all-doctors` - Tüm doktorları listele
-- `POST /api/admin/change-availability` - Doktor müsaitliğini değiştir
-- `GET /api/admin/appointments` - Tüm randevuları listele
-- `POST /api/admin/cancel-appointment` - Randevu iptal et
-- `GET /api/admin/dashboard` - Dashboard verileri
+```bash
+npm run dev
+```
 
-### Doctor Routes
-- `POST /api/doctor/login` - Doktor girişi
-- `GET /api/doctor/appointments` - Doktor randevuları
-- `POST /api/doctor/complete-appointment` - Randevu tamamla
-- `POST /api/doctor/cancel-appointment` - Randevu iptal et
-- `GET /api/doctor/dashboard` - Dashboard verileri
-- `GET /api/doctor/profile` - Profil bilgileri
-- `POST /api/doctor/update-profile` - Profil güncelle
+## أوامر مهمة
 
-### User Routes
-- `POST /api/user/register` - Kullanıcı kaydı
-- `POST /api/user/login` - Kullanıcı girişi
-- `GET /api/user/get-profile` - Profil bilgileri
-- `POST /api/user/update-profile` - Profil güncelle
-- `POST /api/user/book-appointment` - Randevu al
-- `GET /api/user/appointments` - Kullanıcı randevuları
-- `POST /api/user/cancel-appointment` - Randevu iptal et
-- `POST /api/user/payment-razorpay` - Ödeme işlemi
+### Backend
 
-### Public Routes
-- `GET /api/doctor/list` - Tüm doktorları listele
+```bash
+npm run dev
+npm start
+```
 
-## 🎨 Uzmanlık Alanları
+### Frontend
 
-- Pratisyen Hekim
-- Kadın Doğum Uzmanı
-- Dermatoloji
-- Çocuk Doktoru
-- Nörolog
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run preview
+```
 
-## 💳 Ödeme Entegrasyonu
+### Admin
 
-Proje Razorpay ödeme gateway'i kullanır. Test modunda çalışmak için Razorpay hesabınızdan test API anahtarlarını alın.
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run preview
+```
 
-## 🔐 Authentication
+## أهم مسارات API
 
-- JWT (JSON Web Tokens) kullanılır
-- Admin, Doktor ve Hasta için ayrı authentication
-- Token'lar localStorage'da saklanır
-- Bearer token authentication
+### Admin
 
-## 📸 Resim Yükleme
+- `POST /api/admin/login`
+- `POST /api/admin/add-doctor`
+- `POST /api/admin/all-doctors`
+- `GET /api/admin/patients`
+- `POST /api/admin/update-doctor/:docId`
+- `POST /api/admin/update-patient/:userId`
+- `DELETE /api/admin/doctor/:docId`
+- `DELETE /api/admin/patient/:userId`
+- `GET /api/admin/appointments`
+- `POST /api/admin/cancel-appointment`
+- `GET /api/admin/dashboard`
+- `GET /api/admin/center`
+- `POST /api/admin/specialty`
+- `POST /api/admin/broadcast`
+- `POST /api/admin/site-settings`
 
-- Cloudinary kullanılır
-- Doktor profil resimleri
-- Multer ile dosya yükleme
+### Doctor
 
-## 🌐 Port Bilgileri
+- `GET /api/doctor/list`
+- `GET /api/doctor/reviews/:docId`
+- `POST /api/doctor/login`
+- `GET /api/doctor/appointments`
+- `GET /api/doctor/appointments/:appointmentId`
+- `PUT /api/doctor/appointments/:appointmentId/details`
+- `POST /api/doctor/confirm-appointment`
+- `POST /api/doctor/reject-appointment`
+- `POST /api/doctor/complete-appointment`
+- `POST /api/doctor/cancel-appointment`
+- `GET /api/doctor/dashboard`
+- `GET /api/doctor/profile`
+- `POST /api/doctor/update-profile`
+- `GET /api/doctor/patients`
+- `GET /api/doctor/patient/:userId`
+- `POST /api/doctor/patient/:userId/record`
+- `POST /api/doctor/patient/:userId/prescription`
+- `POST /api/doctor/patient/:userId/file`
+- `GET /api/doctor/prescriptions`
+- `GET /api/doctor/chats`
+- `GET /api/doctor/notifications`
 
-- Backend: `http://localhost:4000`
-- Frontend (Hasta): `http://localhost:5173`
-- Admin/Doctor Panel: `http://localhost:5174`
+### User / Patient
 
-## 📝 Notlar
+- `POST /api/user/register`
+- `POST /api/user/login`
+- `GET /api/user/get-profile`
+- `POST /api/user/update-profile`
+- `POST /api/user/update-medical-record`
+- `POST /api/user/change-password`
+- `POST /api/user/book-appointment`
+- `GET /api/user/appointments`
+- `POST /api/user/cancel-appointment`
+- `POST /api/user/payment-razorpay`
+- `POST /api/user/verifyRazorpay`
+- `GET /api/user/prescriptions`
+- `POST /api/user/review`
+- `GET /api/user/chats`
+- `GET /api/user/chat/:docId`
+- `POST /api/user/chat/:docId`
+- `GET /api/user/notifications`
 
-- Tüm şifreler bcrypt ile hash'lenir
-- MongoDB için Atlas veya local instance kullanabilirsiniz
-- Cloudinary hesabı gereklidir (ücretsiz tier yeterli)
-- Razorpay test modu ücretsizdir
+### Prescriptions
 
-## 🤝 Katkıda Bulunma
+- `POST /api/prescriptions`
+- `GET /api/prescriptions/appointment/:appointmentId`
+- `GET /api/prescriptions/patient/:patientId`
+- `GET /api/prescriptions/doctor/:doctorId`
 
-1. Fork yapın
-2. Feature branch oluşturun (`git checkout -b feature/AmazingFeature`)
-3. Değişikliklerinizi commit edin (`git commit -m 'Add some AmazingFeature'`)
-4. Branch'inizi push edin (`git push origin feature/AmazingFeature`)
-5. Pull Request açın
+## المصادقة والصلاحيات
 
-## 📄 Lisans
+- يعتمد النظام على JWT.
+- توجد صلاحيات منفصلة لكل من المدير والطبيب والمريض.
+- توضع رموز الدخول في الهيدر عند استدعاء المسارات المحمية.
+- يستخدم النظام bcrypt لتشفير كلمات المرور قبل تخزينها.
 
-Bu proje MIT lisansı altındadır.
+## رفع الملفات
 
-## 👨‍💻 Geliştirici
+- يتم استقبال الملفات عبر Multer.
+- يتم رفع صور الأطباء وملفات المرضى إلى Cloudinary.
+- يدعم النظام رفع الصور والملفات الطبية المرتبطة بسجل المريض.
 
-**Ayman Bajar**
-- GitHub: [@aymanbajar](https://github.com/aymanbajar)
+## ملاحظات
+
+- قاعدة البيانات الافتراضية في الاتصال هي `prescripto`.
+- يجب أن تتطابق قيمة `VITE_RAZORPAY_KEY_ID` في الواجهة مع مفتاح Razorpay المستخدم في الباكند.
+- مجلدات `node_modules` غير مطلوبة داخل المستودع عند الرفع إلى GitHub.
+- اسم المشروع في المسار الحالي هو `DectorAppBookingSystem` كما هو مستخدم في المستودع.
+
+## المطور
+
+Ayman Bajar
+
+GitHub: https://github.com/aymanbajar
