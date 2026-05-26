@@ -36,8 +36,8 @@ export default function Compare() {
       </div>
 
       {comparedDoctors.length ? (
-        <div className="overflow-x-auto">
-          <div className="grid min-w-[760px] gap-4" style={{ gridTemplateColumns: `180px repeat(${comparedDoctors.length}, minmax(180px, 1fr))` }}>
+        <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <div className="grid min-w-[640px] gap-4 sm:min-w-[760px]" style={{ gridTemplateColumns: `minmax(130px, 180px) repeat(${comparedDoctors.length}, minmax(160px, 1fr))` }}>
             <div />
             {comparedDoctors.map((doctor) => (
               <div key={doctor._id} className="surface-card overflow-hidden">

@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const { backendUrl, token, setToken } = useContext(AppContext);
+  const { backendUrl, token, setToken, userData } = useContext(AppContext);
   const [mode, setMode] = useState("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,12 +31,12 @@ export default function Login() {
   };
 
   useEffect(() => {
-    if (token) navigate("/");
-  }, [token, navigate]);
+    if (token && userData) navigate("/");
+  }, [token, userData, navigate]);
 
   return (
-    <section className="grid min-h-[calc(100vh-5rem)] place-items-center py-12">
-      <form onSubmit={onSubmitHeader} className="surface-card w-full max-w-md p-8">
+    <section className="grid min-h-[calc(100dvh-12rem)] place-items-center py-8 sm:min-h-[calc(100dvh-14rem)] sm:py-12">
+      <form onSubmit={onSubmitHeader} className="surface-card w-full max-w-md p-6 sm:p-8">
         <p className="section-eyebrow">{mode === "register" ? "Yeni hesap" : "Hoş geldiniz"}</p>
         <h1 className="mt-2 text-3xl font-bold text-slate-950">
           {mode === "register" ? "Hesap Oluştur" : "Giriş Yap"}

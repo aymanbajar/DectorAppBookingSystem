@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import logoImage from "../assets/logo.png";
 import profileLogo from "../assets/profileLogo.png";
 import { assets } from "../assets/assets_frontend/assets.js";
@@ -31,10 +31,16 @@ export default function Navbar({ darkMode, setDarkMode }) {
   const logout = () => {
     setToken(false);
     localStorage.removeItem("token");
+    closeMenu();
     navigate("/");
   };
 
   const closeMenu = () => setShowMenu(false);
+
+  useEffect(() => {
+    document.body.classList.toggle("overflow-hidden", showMenu);
+    return () => document.body.classList.remove("overflow-hidden");
+  }, [showMenu]);
 
   const navClass = ({ isActive }) =>
     `rounded-full px-4 py-2 text-sm font-semibold ${
@@ -47,10 +53,11 @@ export default function Navbar({ darkMode, setDarkMode }) {
   const mobileLinkClass = "rounded-2xl px-5 py-3 text-slate-700";
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
-      <div className="page-shell flex h-20 items-center justify-between">
+    <>
+      <header className="sticky top-0 z-50 w-full border-b border-slate-200/80 bg-white/90 backdrop-blur-xl">
+      <div className="page-shell flex h-16 min-w-0 items-center justify-between gap-3 sm:h-20">
         <button type="button" className="flex items-center gap-3" onClick={() => navigate("/")} aria-label="Ana sayfaya git">
-          <img src={logoImage} alt="Dector logo" className="h-14 w-14 object-contain" />
+          <img src={logoImage} alt="Dector logo" className="h-11 w-11 object-contain sm:h-14 sm:w-14" />
           <span className="hidden text-lg font-bold text-slate-950 sm:block">Dector</span>
         </button>
 
@@ -68,7 +75,7 @@ export default function Navbar({ darkMode, setDarkMode }) {
               <img className="h-11 w-11 rounded-full border border-slate-200 object-cover" src={userData.image || profileLogo} alt="Profil" />
               <img className="w-3 opacity-60" src={assets.dropdown_icon} alt="" />
               <div className="absolute right-0 top-10 hidden pt-4 group-hover:block">
-                <div className="min-w-60 rounded-2xl border border-slate-200 bg-white p-2 text-sm text-slate-600 shadow-xl shadow-slate-900/10">
+                <div className="w-60 max-w-[calc(100vw-2rem)] rounded-2xl border border-slate-200 bg-white p-2 text-sm text-slate-600 shadow-xl shadow-slate-900/10">
                   {accountLinks.map((link) => (
                     <button key={link.to} onClick={() => navigate(link.to)} className={`${menuItemClass} ${link.hasBadge ? "flex items-center justify-between gap-3" : ""}`}>
                       <span>{link.label}</span>
@@ -89,43 +96,51 @@ export default function Navbar({ darkMode, setDarkMode }) {
           </button>
         </div>
       </div>
+      </header>
 
-      <div className={`${showMenu ? "fixed inset-0 translate-x-0" : "pointer-events-none fixed inset-0 translate-x-full"} z-[100] flex h-screen max-h-screen flex-col overflow-hidden bg-white transition-transform duration-300 xl:hidden`}>
-        <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-5">
-          <img className="h-14 w-14 object-contain" src={logoImage} alt="Dector logo" />
-          <button onClick={closeMenu} className="rounded-full border border-slate-200 p-3" aria-label="Menuyu kapat">
-            <img className="w-5" src={assets.cross_icon} alt="" />
-          </button>
-        </div>
-
-        <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 pb-28 text-base font-semibold">
-          <div className="grid gap-1">
-            {mainLinks.map((link) => (
-              <NavLink key={link.to} onClick={closeMenu} to={link.to}>
-                <p className={mobileLinkClass}>{link.label}</p>
-              </NavLink>
-            ))}
-          </div>
-
-          {token ? (
-            <div className="mt-4 grid gap-1 border-t border-slate-100 pt-4">
-              {accountLinks.map((link) => (
-                <NavLink key={link.to} onClick={closeMenu} to={link.to}>
-                  <p className={`${mobileLinkClass} ${link.hasBadge ? "flex items-center justify-between gap-3" : ""}`}>
-                    <span>{link.label}</span>
-                    {link.hasBadge && <NotificationBadge count={unreadNotifications} />}
-                  </p>
-                </NavLink>
-              ))}
-              <button onClick={() => setDarkMode((prev) => !prev)} className="w-full rounded-2xl px-5 py-3 text-left text-slate-700">Tema: {darkMode ? "Light" : "Dark"}</button>
-              <button onClick={() => { closeMenu(); logout(); }} className="w-full rounded-2xl px-5 py-3 text-left text-red-600">Cikis yap</button>
+      {showMenu && (
+        <div className="fixed inset-0 z-[100] overflow-hidden bg-slate-950/40 xl:hidden" onClick={closeMenu}>
+          <div
+            className="ml-auto flex h-dvh w-full max-w-sm flex-col overflow-hidden bg-white shadow-2xl shadow-slate-950/20"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex shrink-0 items-center justify-between border-b border-slate-200 px-5 py-4">
+              <img className="h-12 w-12 object-contain" src={logoImage} alt="Dector logo" />
+              <button onClick={closeMenu} className="rounded-full border border-slate-200 p-3" aria-label="Menuyu kapat">
+                <img className="w-5" src={assets.cross_icon} alt="" />
+              </button>
             </div>
-          ) : (
-            <button onClick={() => { closeMenu(); navigate("/login"); }} className="btn-primary mt-4 w-full">Giris Yap</button>
-          )}
-        </nav>
-      </div>
-    </header>
+
+            <nav className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 pb-8 text-base font-semibold">
+              <div className="grid gap-1">
+                {mainLinks.map((link) => (
+                  <NavLink key={link.to} onClick={closeMenu} to={link.to}>
+                    <p className={mobileLinkClass}>{link.label}</p>
+                  </NavLink>
+                ))}
+              </div>
+
+              {token ? (
+                <div className="mt-4 grid gap-1 border-t border-slate-100 pt-4">
+                  {accountLinks.map((link) => (
+                    <NavLink key={link.to} onClick={closeMenu} to={link.to}>
+                      <p className={`${mobileLinkClass} ${link.hasBadge ? "flex items-center justify-between gap-3" : ""}`}>
+                        <span>{link.label}</span>
+                        {link.hasBadge && <NotificationBadge count={unreadNotifications} />}
+                      </p>
+                    </NavLink>
+                  ))}
+                  <button onClick={() => setDarkMode((prev) => !prev)} className="w-full rounded-2xl px-5 py-3 text-left text-slate-700">Tema: {darkMode ? "Light" : "Dark"}</button>
+                  <button onClick={logout} className="w-full rounded-2xl px-5 py-3 text-left text-red-600">Cikis yap</button>
+                </div>
+              ) : (
+                <button onClick={() => { closeMenu(); navigate("/login"); }} className="btn-primary mt-4 w-full">Giris Yap</button>
+              )}
+            </nav>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

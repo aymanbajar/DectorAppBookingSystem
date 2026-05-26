@@ -34,10 +34,10 @@ function App() {
   }, [darkMode])
 
   return (
-    <div className={`min-h-screen ${darkMode ? 'dark' : ''}`}>
+    <div className={`flex min-h-screen w-full flex-col overflow-x-hidden ${darkMode ? 'dark' : ''}`}>
       <ToastContainer />
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
-      <main className="page-shell">
+      <main className="page-shell min-w-0 flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/doctors" element={<Doctors />} />

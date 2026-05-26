@@ -139,15 +139,15 @@ export default function Appointments() {
   const selectedDate = docSlots[slotIndex]?.[0]?.datetime;
 
   return (
-    <div className="mx-auto max-w-6xl py-8">
+    <div className="mx-auto w-full max-w-6xl py-8">
       <div className="surface-card overflow-hidden p-5 sm:p-8">
-        <div className="flex flex-col gap-8 sm:flex-row">
+        <div className="flex min-w-0 flex-col gap-8 sm:flex-row">
           <div className="flex-shrink-0 sm:w-72">
             <img className="h-full w-full rounded-2xl border border-slate-200 bg-cyan-50 object-cover" src={docInfo.image} alt={docInfo.name} />
           </div>
 
-          <div className="flex flex-1 flex-col justify-between gap-4">
-            <div className="flex items-center gap-2">
+          <div className="flex min-w-0 flex-1 flex-col justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-2">
               <h1 className="text-3xl font-bold text-slate-950">{docInfo.name}</h1>
               <img className="h-5 w-5" src={assets.verified_icon} alt="Onaylı" />
             </div>

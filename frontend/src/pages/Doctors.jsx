@@ -110,7 +110,7 @@ export default function Doctors() {
         </button>
       </div>
 
-      <div className="surface-card mb-6 grid gap-4 p-4 lg:grid-cols-[1fr_190px_190px_210px]">
+      <div className="surface-card mb-6 grid min-w-0 gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_190px_190px_210px]">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -161,8 +161,8 @@ export default function Doctors() {
         </div>
       )}
 
-      <div className="flex flex-col items-start gap-6 lg:flex-row">
-        <aside className={`${showFilter ? "block" : "hidden sm:block"} w-full lg:w-72`}>
+      <div className="flex min-w-0 flex-col items-start gap-6 lg:flex-row">
+        <aside className={`${showFilter ? "block" : "hidden sm:block"} w-full shrink-0 lg:w-72`}>
           <div className="surface-card sticky top-28 space-y-2 p-3">
             <button
               onClick={() => navigate("/doctors")}
@@ -182,7 +182,7 @@ export default function Doctors() {
           </div>
         </aside>
 
-        <div className="w-full">
+        <div className="min-w-0 w-full">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
             <span>{filteredDoctors.length} doktor bulundu</span>
             <div className="flex gap-4">
