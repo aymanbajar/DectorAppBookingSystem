@@ -10,6 +10,13 @@ import { createNotification } from './notificationController.js';
 import doctorPatientRecordModel from '../models/doctorPatientRecordModel.js';
 import appointmentDetailModel from '../models/appointmentDetailModel.js';
 // api to  register user
+const createToken = (id) => {
+    if (!process.env.JWT_SECRET) {
+        throw new Error("JWT_SECRET is missing in backend .env");
+    }
+    return jwt.sign({ id }, process.env.JWT_SECRET);
+};
+
 const getAppointmentTime = (appointment) => {
     const [day, month, year] = String(appointment.sloteDate || "").split("-").map(Number);
     const time = String(appointment.sloteTime || "00:00").trim();
@@ -53,7 +60,7 @@ export const registerUser = async (req, res) => {
         const userData = {name,email,password:hashedPassword};
         const newUser = new userModel(userData);
         await newUser.save();
-        const token = jwt.sign({id:newUser._id},process.env.JWT_SECRET)
+        const token = createToken(newUser._id)
 
         res.json({
             success:true,
@@ -73,6 +80,13 @@ export const registerUser = async (req, res) => {
 export const loginUser = async (req,res) => {
     try{
         const {email,password} = req.body;
+        if(!email || !password){
+            return res.json({
+                success:false,
+                message:"E-posta ve parola gerekli"
+            })
+        }
+
         const user = await userModel.findOne({email});
         if(!user){
             return res.json({
@@ -88,7 +102,7 @@ export const loginUser = async (req,res) => {
         }
         const isPasswordMatch = await bcrypt.compare(password,user.password);
         if(isPasswordMatch){
-            const token = jwt.sign({id:user._id},process.env.JWT_SECRET)
+            const token = createToken(user._id)
             return res.json({
                 success:true,
                 token

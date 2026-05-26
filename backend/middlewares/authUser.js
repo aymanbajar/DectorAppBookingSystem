@@ -16,8 +16,15 @@ const authUser = async (req, res, next) => {
     // مرّر للـ route التالي
     next();
   } catch (error) {
+    if (error.name === "JsonWebTokenError" || error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        success: false,
+        message: "Invalid or expired token, login again",
+      });
+    }
+
     console.log(error);
-    res.json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
     
